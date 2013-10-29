@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  host: localhost
+  username: postgres
+  password: password
+
+development:
+  <<: *default
+  database: weeverse_dev
+
+test:
+  <<: *default
+  database: weeverse_test
+
+production:
+  <<: *default
+  database: weeverse

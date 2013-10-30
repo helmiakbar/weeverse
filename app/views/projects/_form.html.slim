@@ -14,13 +14,10 @@
       = f.label :description
       = f.text_area :description, class: "large-4 columns"
     .row
-      = f.label :address
-      = f.text_field :address, class: "large-4 columns"
-    .row
       = f.label :image
       = f.file_field :image
     .row
-      - if user_signed_in?
-        = f.hidden_field :creator, value: current_user.name
+      = f.hidden_field :creator, value: current_user.name
+      = f.hidden_field :address, value: current_user.address
     br
     .actions = f.submit 'Save', class: "medium button", style: "margin-left: 22%"

@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  strong Title:
+  = @idea.title
+p
+  strong Description:
+  = @idea.description
+p
+  strong Image:
+  = image_tag(@idea.image, style: 'height: 150px; width: 200px;')
+
+= link_to 'Edit', edit_idea_path(@idea)
+'|
+= link_to 'Back', ideas_path

@@ -6,7 +6,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 - else
   = link_to "sign_in", new_user_session_path
 
-#map
+#map style="height: 180px"
 
 h1 Listing projects
 
@@ -36,7 +36,7 @@ h1 Listing projects
 
 javascript:
   var map = L.map('map').setView([51.505, -0.09], 13);
-  L.tileLayer('http://{s}.tile.cloudmade.com/API-key/997/256/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-    maxZoom: 18
+  var marker = L.marker([51.5, -0.09]).addTo(map);
+  L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);

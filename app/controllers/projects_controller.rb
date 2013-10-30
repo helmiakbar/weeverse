@@ -10,7 +10,7 @@ class ProjectsController < ApplicationController
   def join
     @project = Project.find(params[:id])
     @project.users << current_user
-    render nothing: true
+    redirect_to project_path
   end
 
   # GET /projects/1

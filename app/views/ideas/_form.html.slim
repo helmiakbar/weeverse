@@ -1,0 +1,18 @@
+= form_for @idea do |f|
+  - if @idea.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@idea.errors.count, "error")} prohibited this idea from being saved:"
+      ul
+        - @idea.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :title
+    = f.text_field :title
+  .field
+    = f.label :description
+    = f.text_field :description
+  .field
+    = f.label :image
+    = f.file_field :image
+  .actions = f.submit 'Save'

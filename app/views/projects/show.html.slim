@@ -7,17 +7,25 @@ p
   strong Description:
   = @project.description
 p
-  strong Address:
-  = @project.address
-p
 	strong Image:
 	= image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
 
-= link_to 'join', join_path(@project.id), class: "medium button", style: "margin-left: 22%"
+input.star name="star1" type="radio"
+input.star name="star1" type="radio"
+input.star name="star1" type="radio"
+input.star name="star1" type="radio"
+input.star name="star1" type="radio"
 
-= link_to 'Edit', edit_project_path(@project)
-'|
-= link_to 'Back', projects_path
+- if @project.creator == current_user.name
+  = link_to 'Edit', edit_project_path(@project)
+  '|
+  = link_to 'Back', projects_path  
+-else  
+  = link_to 'join', join_path(@project.id), class: "medium button", style: "margin-left: 22%"
+
+  = link_to 'Edit', edit_project_path(@project)
+  '|
+  = link_to 'Back', projects_path
 
 #disqus_thread style='width: 690px'
 javascript:

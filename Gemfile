@@ -51,4 +51,5 @@ gem 'carrierwave'
 gem 'mini_magick'
 gem "pg"
 gem 'slim-rails'
-gem 'letsrate'
+gem 'jquery-star-rating-rails'
+# gem 'acts_as_votable', '~> 0.7.1' 

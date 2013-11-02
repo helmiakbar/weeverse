@@ -1,38 +1,45 @@
-p#notice = notice
+link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
+script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
-p
-  strong Title:
-  = @project.title
-p
-  strong Description:
-  = @project.description
-p
-	strong Image:
-	= image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
+.row
+  .small-4.columns style="margin-left: -200px; top: 90px"
+    = image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
+  .small-4.columns style="top: 90px"
+    p style="margin-left: -490px"
+      = @project.title 
+    p style="margin-left: -490px"
+      = @project.description
+    p
+      - if @project.creator == current_user.name
+        = link_to 'Back', projects_path, style: "margin-left: -593px"
+      - else
+        = link_to 'join', join_path(@project.id), class: "medium button", style: "margin-left: -593px"
+        = link_to 'Back', projects_path
+      input.star name="star1" type="radio"
+      input.star name="star1" type="radio"
+      input.star name="star1" type="radio"
+      input.star name="star1" type="radio"
+      input.star name="star1" type="radio"
 
-input.star name="star1" type="radio"
-input.star name="star1" type="radio"
-input.star name="star1" type="radio"
-input.star name="star1" type="radio"
-input.star name="star1" type="radio"
 
-- if @project.creator == current_user.name
-  = link_to 'Edit', edit_project_path(@project)
-  '|
-  = link_to 'Back', projects_path  
--else  
-  = link_to 'join', join_path(@project.id), class: "medium button", style: "margin-left: 22%"
+#map style="height: 35% !important; width: 25% !important; left: 69%; top: -80px;"
 
-  = link_to 'Edit', edit_project_path(@project)
-  '|
-  = link_to 'Back', projects_path
-
-#disqus_thread style='width: 690px'
+#disqus_thread style='width: 592px; margin-left: 325px'
 javascript:
-  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-  var disqus_developer = 1;
-  var disqus_shortname = 'helmitest'; // required: replace example with your forum shortname
+  var dataLocation = #{raw @project1.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+  for (i = 0; i < dataLocation.length; i++) {
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
+  }
+  L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+  }).addTo(map);
 
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'helmitest'; // required: replace example with your forum shortname
+  var disqus_developer = #{ Rails.env == "production" ? '0' : '1' };
+  var disqus_url = "#{ request.url }";
+  var disqus_identifier = "#{ request.fullpath }";
   /* * * DON'T EDIT BELOW THIS LINE * * */
   (function() {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

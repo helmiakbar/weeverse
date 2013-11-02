@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+  before_filter :authenticate_user!, only: [:show]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   # GET /projects
@@ -16,6 +18,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.json
   def show
+    @project1 = Project.where(id: params[:id])
   end
 
   # GET /projects/new
@@ -75,6 +78,6 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:title, :description, :address, :image, :creator)
+      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long)
     end
 end

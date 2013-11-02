@@ -3,7 +3,9 @@ class CreateProjects < ActiveRecord::Migration
     create_table :projects do |t|
       t.string :title
       t.string :description
-      t.string :address
+      t.string :country
+      t.string :city
+      t.string :postal_code
       t.string :image
       t.string :creator
 

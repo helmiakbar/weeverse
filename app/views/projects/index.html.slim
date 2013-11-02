@@ -1,6 +1,7 @@
 link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
+
 - if user_signed_in?
   = link_to "sign_out", destroy_user_session_path, :method => :delete
 - else
@@ -8,35 +9,25 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 #map style="height: 180px"
 
-h1 Listing projects
-
 .row
-  table
-    tr
-      th Title
-      th Description
-      th Image
-      th
-      th
-      th
-      th
+  - @projects.each do |project|
+    .small-4.columns
+      p
+        = image_tag(project.image, style: 'height: 150px; width: 200px;')
+      p
+        = link_to "#{project.title}", project 
+      p
+        = "Project by #{project.creator} in #{project.country}"
 
-    - @projects.each do |project|
-      tr
-        td = link_to "#{project.title}", project 
-        td = project.description
-        td = image_tag(project.image, style: 'height: 150px; width: 200px;')
-        / td = link_to 'Show', project
-        / td = link_to 'Edit', edit_project_path(project)
-        / td = link_to 'Destroy', project, :confirm => 'Are you sure?', :method => :delete
-        td = "Project by #{project.creator} in #{project.address}"
-  br
 - if user_signed_in?
   = link_to 'New Project', new_project_path
 
 javascript:
-  var map = L.map('map').setView([51.505, -0.09], 13);
-  var marker = L.marker([51.5, -0.09]).addTo(map);
+  var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+  for (i = 0; i < dataLocation.length; i++) {
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
+  }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);

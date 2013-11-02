@@ -4,11 +4,6 @@ script src="http://code.jquery.com/jquery-1.8.3.min.js"
 script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
 
 #map
-#box
-  | Drag Marker on the map:
-  span.poi-type
-    img.drag alt="POI: red" src="/assets/poi_red.png" type="red"
-    | Red
 
 = form_for @project do |f|
   - if @project.errors.any?
@@ -18,37 +13,72 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
         - @project.errors.full_messages.each do |message|
           li = message
 
-  fieldset
-    .row
-      .large-1.columns
-        = f.label :country
-      .large-3.columns
-        = f.text_field :country
-      .large-1.columns
-        = f.label :city
-      .large-3.columns
-        = f.text_field :city
-      .large-1.columns
-        = f.label :postal_code
-      .large-3.columns
-        = f.text_field :postal_code
-      .large-3.columns
-        div id ="add-address" "add address.."
-    .row
-      = f.label :title, style: "margin-left: 272px"
-      = f.text_field :title, class: "large-4 columns", style: "margin-left: 272px"
-    .row
-      = f.label :description, style: "margin-left: 272px"
-      = f.text_area :description, class: "large-4 columns", style: "margin-left: 272px"
-    .row
-      = f.label :image
-      = f.file_field :image
-    .row
-      = f.hidden_field :creator, value: current_user.name
-      = f.hidden_field :lat
-      = f.hidden_field :long
-    br
-    .actions = f.submit 'Save', class: "medium button", style: "margin-left: 22%"
+  #container-bar.row
+    .large-4.columns.top-bar-content
+      p
+        | Drag this
+        img.drag alt="POI: red" src="/assets/poi_red.png" type="red"
+        | to the map, or set location manually
+    .large-8.columns.top-bar-content
+      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
+        tr
+          td 
+            = f.label :country
+          td
+            = f.text_field :country
+          td 
+            = f.label :city
+          td
+            = f.text_field :city
+          td 
+            = f.label :postal_code
+          td
+            = f.text_field :postal_code
+          td
+            div id ="add-address" "add address.."
+    #container-content.row
+      #container-content-left.large-2.columns
+        .row
+          #box-question.large-12.columns
+            span What kind of content are you adding?
+          .large-12.columns.left-menu
+            a href="#" Projects
+          .large-12.columns.left-menu
+            a href="#" Ideas
+          .large-12.columns.left-menu
+            a href="#" Media
+          .large-12.columns.left-menu
+            a href="#" Places
+      #container-content-right.large-10.columns
+        .row
+          #container-upload.large-4.columns
+            #box-upload
+              a#btn-upload.button.success href="#"
+                = f.label :image, "Upload Image"
+          #container-information.large-8.columns
+            = f.text_field :title, placeholder: "Title"
+            = f.text_area :description, placeholder: "Description"
+            = f.hidden_field :creator, value: current_user.name
+            = f.hidden_field :lat
+            = f.hidden_field :long
+        .row
+          #container-add.large-4.large-offset-2
+            .actions = f.submit 'Save', id: "btn-add", class: "button"
+    / .row
+    /   = f.label :title, style: "margin-left: 272px"
+    /   = f.text_field :title, class: "large-4 columns", style: "margin-left: 272px"
+    / .row
+    /   = f.label :description, style: "margin-left: 272px"
+    /   = f.text_area :description, class: "large-4 columns", style: "margin-left: 272px"
+    / .row
+    /   = f.label :image
+    /   = f.file_field :image
+    / .row
+    /   = f.hidden_field :creator, value: current_user.name
+    /   = f.hidden_field :lat
+    /   = f.hidden_field :long
+    / br
+    / .actions = f.submit 'Save', class: "medium button", style: "margin-left: 22%"
 
 javascript:
   var gs = {

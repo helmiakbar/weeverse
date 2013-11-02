@@ -1,0 +1,41 @@
+#container-header{background:#679966; border-bottom:1px solid #fff;}
+#left-header{height:50px; position:relative;}
+#left-header img{margin-top:5px;}
+#left-header h4{position:absolute; top:5px; left:60px; color:#FDF5C6;}
+
+#middle-header{height:50px; padding-top:10px; position:relative; border-left:1px solid #fff; border-right:1px solid #fff;}
+#middle-header #text-search{font-size:0.7em; border-radius:15px; background:#515151; border-color:#515151; color:#fff; width:150px;}
+#middle-header #top-menu{position:absolute; top:6px; right:20px; float:right;}
+#middle-header #top-menu li{display:inline; margin:15px; font-size:1.4em;}
+#middle-header #top-menu li a{color:#fff;}
+#middle-header #top-menu li a:hover{color:#515151;}
+
+#right-header{height:50px; padding-top:12px; position:relative; border-left:1px solid #fff; text-align:right;}
+#right-header #link_login{color:#fff;}
+#right-header #link_login:hover{color:#515151;}
+
+#maps{width:100%; height:300px;}
+
+#container-bar .top-bar-content{height:50px; background:#CECBE6;}
+#container-bar .top-bar-content p{margin-top:10px;}
+#container-bar .top-bar-content table tr th, table tr td{padding:4px;}
+#container-bar .top-bar-content table input[type=text]{margin-top:12px;}
+#container-bar .top-bar-content table a{color:#4559B9;}
+
+#container-content #container-content-left #box-question{padding:7px 7px 7px 7px;}
+#container-content #container-content-left #box-question span{line-height:20px;}
+#container-content #container-content-left .left-menu{padding:7px 7px; border-top:1px solid #ccc; font-size:1.2em;}
+#container-content #container-content-left .left-menu:hover{background:#000;}
+#container-content #container-content-left .left-menu:hover a{color:#BF9751 !important;}
+#container-content #container-content-left .left-menu a{color:#4563A1 !important;}
+
+#container-content #container-content-right{background:#CDFFCC; border-left:1px solid #D2E8BF;}
+#container-content #container-content-right #container-upload{padding-right:2px;}
+#container-content #container-content-right #container-upload #box-upload{height:230px; background:white; border:1px solid black; margin-top:15px;}
+#container-content #container-content-right #container-upload #box-upload #btn-upload{border-radius:10px; padding-top:5px; padding-bottom:5px; width:155px; display:block; margin:100px auto;}
+
+#container-content #container-content-right #container-information{margin-top:15px;}
+#container-content #container-content-right #container-information input[type=text]{border:1px solid black; width:545px;}
+#container-content #container-content-right #container-information textarea{height:184px; border:1px solid black; width:545px;}
+
+#container-content #container-content-right #container-add #btn-add{margin-left:10px; margin-top:2px; width:360px; border-radius:10px; padding-top:5px; padding-bottom:5px;}

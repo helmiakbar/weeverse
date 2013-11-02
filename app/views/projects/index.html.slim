@@ -2,10 +2,10 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 
-- if user_signed_in?
-  = link_to "sign_out", destroy_user_session_path, :method => :delete
-- else
-  = link_to "sign_in", new_user_session_path
+/ - if user_signed_in?
+/   = link_to "sign_out", destroy_user_session_path, :method => :delete
+/ - else
+/   = link_to "sign_in", new_user_session_path
 
 #map style="height: 180px"
 
@@ -24,7 +24,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 javascript:
   var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
   for (i = 0; i < dataLocation.length; i++) {
     var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
   }

@@ -4,14 +4,36 @@
 	<title>Weeverse</title>
 	<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
 	<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+	<link rel="stylesheet" type="text/css" href="assets/styles/style.css"/>
 	<%= csrf_meta_tags %>
 </head>
 <body>
-	<nav class="top-bar">
-		<ul class="title-area">
-			<li class="name"><!-- Leave this empty --></li>
-		</ul>
-	</nav>
+	<div id="container-header" class="row">
+		<div id="left-header" class="large-4 columns">
+			<a href="#">
+				<img src="assets/images/earth.png" width="40"/>
+				<h4>EARTH HEALING NETWORK</h4>
+			</a>
+		</div>
+		<div id="middle-header" class="large-4 columns">
+			<input id="text-search" type="text" placeHolder="Search" name="search"/>
+			<ul id="top-menu">
+				<li><a href="#">Map</a></li>
+				<li><a href="#">Calendar</a></li>
+			</ul>
+		</div>
+		<% if user_signed_in? %>
+			<div id="right-header" class="large-1 small-offset-3 columns">
+				<%= link_to "Log Out", destroy_user_session_path, :method => :delete %>
+				<!-- <a href="#" id="link_login" style="font-size:1.4em;">Log Out</a> -->
+			</div>
+		<% else %>
+			<div id="right-header" class="large-1 small-offset-3 columns">
+				<%= link_to "sign_in", new_user_session_path %>
+				<!-- <a href="#" id="link_login" style="font-size:1.4em;">Login</a> -->
+			</div>
+		<% end %>
+	</div>
 	<%= yield %>
 
 </body>

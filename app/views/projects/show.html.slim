@@ -2,14 +2,14 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 .row
-  .small-4.columns style="margin-left: -200px; top: 90px"
+  .small-4.columns style="right: -150px; top: 90px"
     = image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
   .small-4.columns style="top: 90px"
     p style="margin-left: -490px"
       = @project.title 
     p style="margin-left: -490px"
       = @project.description
-    p
+    p 
       - if @project.creator == current_user.name
         = link_to 'Back', projects_path, style: "margin-left: -593px"
       - else

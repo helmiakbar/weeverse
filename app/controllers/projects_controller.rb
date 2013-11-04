@@ -9,6 +9,11 @@ class ProjectsController < ApplicationController
     @projects = Project.all
   end
 
+  def all
+    @projects = Project.all
+    @ideas = Idea.all
+  end
+
   def join
     @project = Project.find(params[:id])
     @project.users << current_user

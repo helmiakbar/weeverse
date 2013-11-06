@@ -39,3 +39,12 @@
 #container-content #container-content-right #container-information textarea{height:184px; border:1px solid black; width:545px;}
 
 #container-content #container-content-right #container-add #btn-add{margin-left:10px; margin-top:2px; width:360px; border-radius:10px; padding-top:5px; padding-bottom:5px;}
+
+#container-content #container-content-right #container-projects{padding:15px;}
+#container-content #container-content-right #container-projects .project{background:#fff; border-radius:10px; float:left; width:255px; border:1px solid black; margin-right:15px; margin-bottom:15px;}
+#container-content #container-content-right #container-projects .project .title{padding:8px;}
+#container-content #container-content-right #container-projects .project .project-info{border-bottom:1px solid #ccc; padding:8px; font-size:0.8em;}
+#container-content #container-content-right #container-projects .project .project-desc{border-bottom:1px solid #ccc; padding:3px 8px 5px;}
+#container-content #container-content-right #container-projects .project .project-desc span{font-size:0.8em; line-height:18px;}
+#container-content #container-content-right #container-projects .project .project-bottom .rating{border-right:1px solid #ccc; float:left; width:180px; height:35px; text-align:center; padding-top:8px;}
+#container-content #container-content-right #container-projects .project .project-bottom .detail{float:right; width:70px; height:35px; text-align:center; padding-top:8px;}

@@ -1,23 +1,56 @@
-h1 Listing ideas
+link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
+script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
-table
-  tr
-    th Title
-    th Description
-    th Image
-    th
-    th
-    th
+#container-bar.row
+  .large-4.columns.top-bar-content
+    = link_to 'Show All', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+  .large-8.columns.top-bar-content
+    - if user_signed_in?
+      = link_to 'New Idea', new_idea_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+  #container-content.row
+    #container-content-left.large-2.columns
+      .row
+        #box-question.large-12.columns
+          span What kind of content are you adding?
+        .large-12.columns.left-menu
+          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          a href="#" | Media
+        .large-12.columns.left-menu
+          a href="#" | Places
+    #container-content-right.large-10.columns
+      .row
+      - @ideas.each do |idea|
+        .small-4.columns
+          p
+            = image_tag(idea.image, style: 'height: 150px; width: 200px;')
+          p
+            = link_to "#{idea.title}", idea
+          p
+            = idea.description
 
-  - @ideas.each do |idea|
-    tr
-      td = idea.title
-      td = idea.description
-      td = image_tag(idea.image, style: 'height: 150px; width: 200px;')
-      td = link_to 'Show', idea
-      td = link_to 'Edit', edit_idea_path(idea)
-      td = link_to 'Destroy', idea, :confirm => 'Are you sure?', :method => :delete
+/ h1 Listing ideas
 
-br
+/ table
+/   tr
+/     th Title
+/     th Description
+/     th Image
+/     th
+/     th
+/     th
 
-= link_to 'New Idea', new_idea_path
+/   - @ideas.each do |idea|
+/     tr
+/       td = idea.title
+/       td = idea.description
+/       td = image_tag(idea.image, style: 'height: 150px; width: 200px;')
+/       td = link_to 'Show', idea
+/       td = link_to 'Edit', edit_idea_path(idea)
+/       td = link_to 'Destroy', idea, :confirm => 'Are you sure?', :method => :delete
+
+/ br
+
+/ = link_to 'New Idea', new_idea_path

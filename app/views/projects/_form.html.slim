@@ -53,8 +53,9 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
         .row
           #container-upload.large-4.columns
             #box-upload
-              a#btn-upload.button.success href="#"
-                = f.label :image, "Upload Image"
+              / a#btn-upload.button.success href="#"
+              = f.label :image, "Upload Image"
+              = f.file_field :image
           #container-information.large-8.columns
             = f.text_field :title, placeholder: "Title"
             = f.text_area :description, placeholder: "Description"

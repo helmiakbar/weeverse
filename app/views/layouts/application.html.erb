@@ -31,13 +31,14 @@
 		</div>
 		<% if user_signed_in? %>
 			<div id="right-header" class="large-1 small-offset-3 columns">
-				<%= link_to "Logout", destroy_user_session_path, :method => :delete %>
-				<!-- <a href="#" id="link_login" style="font-size:1.4em;">Log Out</a> -->
+				<a href="#" data-dropdown="drop1"><%= current_user. name %></a>
+				<ul id="drop1" class="f-dropdown" data-dropdown-content>
+				  <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
+				</ul>
 			</div>
 		<% else %>
 			<div id="right-header" class="large-1 small-offset-3 columns">
 				<%= link_to "Login", new_user_session_path %>
-				<!-- <a href="#" id="link_login" style="font-size:1.4em;">Login</a> -->
 			</div>
 		<% end %>
 	</div>

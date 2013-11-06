@@ -1,6 +1,5 @@
 class ProjectsController < ApplicationController
   skip_before_filter :verify_authenticity_token
-  before_filter :authenticate_user!, only: [:show]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   # GET /projects
@@ -12,6 +11,10 @@ class ProjectsController < ApplicationController
   def all
     @projects = Project.all
     @ideas = Idea.all
+  end
+
+  def location
+    @projects = Project.where(city: current_user.city)
   end
 
   def join

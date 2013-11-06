@@ -13,7 +13,6 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
-          span What kind of content are you adding?
         .large-12.columns.left-menu
           = link_to 'Projects', projects_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
@@ -50,19 +49,6 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
                   img src="/assets/love-white.jpg"
                 .detail
                   img src="/assets/love-white.jpg"
-    / #container-content-right.large-10.columns
-    /   .row
-    /   - @projects.each do |project|
-    /     .small-4.columns
-    /       p
-    /         = link_to "#{project.title}", project 
-    /       p
-    /         = image_tag(project.image, style: 'height: 150px; width: 200px;')
-    /       p
-    /         = "Project by #{project.creator} in #{project.country}"
-    /       p
-    /         = project.description
-
 javascript:
   var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);

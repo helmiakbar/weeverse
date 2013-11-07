@@ -48,6 +48,9 @@ class ProjectsController < ApplicationController
   # POST /projects
   # POST /projects.json
   def create
+    location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    project_params[:lat].blank? ? project_params[:lat] << location.latitude.to_s : project_params[:lat]
+    project_params[:long].blank? ? project_params[:long] << location.longitude.to_s : project_params[:long]
     @project = Project.new(project_params)
 
     respond_to do |format|

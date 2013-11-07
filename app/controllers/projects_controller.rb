@@ -8,7 +8,7 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     if user_signed_in?
-      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
       @projects = Project.where(city: @location.city_name)
     else
       @projects = Project.all
@@ -48,7 +48,7 @@ class ProjectsController < ApplicationController
   # POST /projects
   # POST /projects.json
   def create
-    location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
     project_params[:lat].blank? ? project_params[:lat] << location.latitude.to_s : project_params[:lat]
     project_params[:long].blank? ? project_params[:long] << location.longitude.to_s : project_params[:long]
     @project = Project.new(project_params)

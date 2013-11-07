@@ -4,7 +4,12 @@ class IdeasController < ApplicationController
   # GET /ideas
   # GET /ideas.json
   def index
-    @ideas = Idea.all
+    if user_signed_in?
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      @ideas = Idea.where(city: @location.city_name)
+    else
+      @ideas = Idea.all
+    end
   end
 
   # GET /ideas/1

@@ -17,7 +17,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag alt="POI: red" src="/assets/poi_red.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
       table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
@@ -42,9 +42,9 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
           #box-question.large-12.columns
             span What kind of content are you adding?
           .large-12.columns.left-menu
-            = link_to 'Projects', projects_path
+            = link_to 'Projects', new_project_path
           .large-12.columns.left-menu
-            = link_to 'Ideas', ideas_path
+            = link_to 'Ideas', new_idea_path
           .large-12.columns.left-menu
             a href="#" Media
           .large-12.columns.left-menu
@@ -142,6 +142,7 @@ javascript:
 
       },
       stop: function(evt, ui) {
+      $(".show").hide();
 
         var options = {
           pid: guid(),
@@ -208,115 +209,34 @@ javascript:
   // INSERT point
 
   function insertPoint(position,options) {
-  var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+    console.log(position);
+    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
 
-  $.get( url, function( data ) {
-   data = JSON.parse(data)
-   $("#project_country").val(data.results[0].locations[0].adminArea4)
-   $("#project_city").val(data.results[0].locations[0].adminArea5)
-   $("#project_postal_code").val(data.results[0].locations[0].postalCode)
-   $("#project_lat").val(data.results[0].locations[0].latLng.lat)
-   $("#project_long").val(data.results[0].locations[0].latLng.lng)
-  
-  });
-  var point = L.marker(position,options).addTo(map);
-  point.bindPopup(
-  '<a onClick="deletePoint(\'' + point.options.pid 
-  + '\');" href="#">Remove Me!</a>',
-  {
-  closeButton: false
+    $.get( url, function( data ) {
+      console.log(data);
+      data = JSON.parse(data);
+      $("#project_country").val(data.results[0].locations[0].adminArea4)
+      $("#project_city").val(data.results[0].locations[0].adminArea5)
+      $("#project_postal_code").val(data.results[0].locations[0].postalCode)
+      $("#project_lat").val(data.results[0].locations[0].latLng.lat)
+      $("#project_long").val(data.results[0].locations[0].latLng.lng)
+    
+    });
+    var point = L.marker(position,options).addTo(map);
+
+    point.on('dragend', function(evt){
+      updatePoint(point);
+    });
+
+    markers.push(point);
+
   }
-  );
-
-  point.on('dragend', function(evt){
-  updatePoint(point);
-  });
-
-  markers.push(point);
-  
-  var postData = 
-  '<wfs:Transaction\n'
-  + '  service="WFS"\n'
-  + '  version="1.1.0"\n'
-  + '  xmlns:grp="http://lab.georepublic.info"\n'
-  + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
-  + '  xmlns:gml="http://www.opengis.net/gml"\n'
-  + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
-  + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
-  + '                      http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd\n'
-  + '                      http://lab.georepublic.info/geoserver/grp/wfs/DescribeFeatureType?typename=grp:points">\n'
-  + '  <wfs:Insert>\n'
-  + '    <grp:points>\n'
-  + '      <grp:pid>' + point.options.pid + '</grp:pid>\n'
-  + '      <grp:class>' + point.options.type + '</grp:class>\n'
-  + '      <grp:ip>' + user.ip + '</grp:ip>\n'
-  + '      <grp:the_geom>\n'
-  + '        <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">\n'
-  + '          <gml:coordinates decimal="." cs="," ts=" ">' + point.getLatLng().lat + ',' + point.getLatLng().lng + '</gml:coordinates>\n'
-  + '        </gml:Point>\n'
-  + '      </grp:the_geom>\n'
-  + '    </grp:points>\n'
-  + '  </wfs:Insert>\n'
-  + '</wfs:Transaction>';
-
-  $.ajax({
-  type: "POST",
-  url: gs.wfs,
-  dataType: "xml",
-  contentType: "text/xml",
-  data: postData,
-                  //TODO: Error handling
-                  success: function(xml) {        
-                          //TODO: User feedback
-                          }
-                          });
-
-   }
 
   // UPDATE point
   function updatePoint(point) {
-
-  var postData = 
-  '<wfs:Transaction\n'
-  + '  service="WFS"\n'
-  + '  version="1.1.0"\n'
-  + '  xmlns:grp="http://lab.georepublic.info"\n'
-  + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
-  + '  xmlns:ogc="http://www.opengis.net/ogc"\n'
-  + '  xmlns:gml="http://www.opengis.net/gml"\n'
-  + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
-  + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
-  + '                      http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd">\n'
-  + '  <wfs:Update typeName="grp:points">\n'
-  + '    <wfs:Property>\n'
-  + '      <wfs:Name>the_geom</wfs:Name>\n'
-  + '      <wfs:Value>\n'
-  + '        <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">\n'
-  + '          <gml:coordinates decimal="." cs="," ts=" ">' + point.getLatLng().lat + ',' + point.getLatLng().lng + '</gml:coordinates>\n'
-  + '        </gml:Point>\n'
-  + '      </wfs:Value>\n'
-  + '    </wfs:Property>\n'
-  + '    <ogc:Filter>\n'
-  + '      <PropertyIsEqualTo>\n'
-  + '        <PropertyName>pid</PropertyName>\n'
-  + '        <Literal>' + point.options.pid + '</Literal>\n'
-  + '      </PropertyIsEqualTo>\n'
-  + '    </ogc:Filter>\n'
-  + '  </wfs:Update>\n'
-  + '</wfs:Transaction>';
-
-  $.ajax({
-  type: "POST",
-  url: gs.wfs,
-  dataType: "xml",
-  contentType: "text/xml",
-  data: postData,
-                  //TODO: Error handling
-                  success: function(xml) {        
-                          //TODO: User feedback
-                          }
-                          });
-                          }
+    console.log("lat: "+ point.getLatLng().lat);
+    console.log("long: "+ point.getLatLng().lng);
+  }
 
   // DELETE point
   function deletePoint(pid) {

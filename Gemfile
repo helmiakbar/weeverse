@@ -52,4 +52,7 @@ gem 'mini_magick'
 gem "pg"
 gem 'slim-rails'
 gem 'jquery-star-rating-rails'
+gem 'rack-cors', :require => 'rack/cors'
+gem "fog"
+gem "geoip"
 # gem 'acts_as_votable', '~> 0.7.1' 

@@ -2,29 +2,27 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 .row
-  .small-4.columns style="right: -150px; top: 90px"
+  .small-3.columns
     = image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
-  .small-4.columns style="top: 90px"
-    p style="margin-left: -490px"
+  .small-4.columns style="left: -560px;"
+    p 
       = @project.title 
-    p style="margin-left: -490px"
+    p 
       = @project.description
     p 
-      - if @project.creator == current_user.name
-        = link_to 'Back', projects_path, style: "margin-left: -593px"
-      - else
-        = link_to 'join', join_path(@project.id), class: "medium button", style: "margin-left: -593px"
-        = link_to 'Back', projects_path
+      = link_to 'join', join_path(@project.id), class: "medium button"
+      / = link_to 'Back', projects_path
+    p style="right: 100px"
       input.star name="star1" type="radio"
       input.star name="star1" type="radio"
       input.star name="star1" type="radio"
       input.star name="star1" type="radio"
       input.star name="star1" type="radio"
 
+#map style="height: 35% !important; width: 25% !important; left: 69%; top: -154px;"
 
-#map style="height: 35% !important; width: 25% !important; left: 69%; top: -80px;"
+#disqus_thread style='width: 592px; margin-left: 325px; margin-top: -230px;'
 
-#disqus_thread style='width: 592px; margin-left: 325px'
 javascript:
   var dataLocation = #{raw @project1.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
@@ -46,10 +44,3 @@ javascript:
       dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
-
-noscript
-	Please enable JavaScript to view the
-	a href "http://disqus.com/?ref_noscript"
-a.dsq-brlink href="http://disqus.com"
-  | comments powered by
-  span.logo-disqus Disqus

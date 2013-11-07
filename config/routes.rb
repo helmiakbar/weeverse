@@ -4,6 +4,7 @@ Weeverse::Application.routes.draw do
   resources :projects
   get "join/:id" => "projects#join", as: :join
   get "all" => "projects#all"
+  get "big/:id" => "projects#big", as: :big
 
   devise_for :users, controllers: {registrations: "users/registrations", sessions: "users/sessions"}
   # The priority is based upon order of creation: first created -> highest priority.

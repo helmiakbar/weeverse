@@ -1,3 +1,5 @@
+require 'geoip'
+
 class ProjectsController < ApplicationController
   skip_before_filter :verify_authenticity_token
   before_action :set_project, only: [:show, :edit, :update, :destroy]
@@ -5,7 +7,12 @@ class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.json
   def index
-    @projects = Project.all
+    if user_signed_in?
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      @projects = Project.where(city: @location.city_name)
+    else
+      @projects = Project.all
+    end
   end
 
   def all
@@ -13,8 +20,8 @@ class ProjectsController < ApplicationController
     @ideas = Idea.all
   end
 
-  def location
-    @projects = Project.where(city: current_user.city)
+  def big
+    @project = Project.where(id: params[:id])
   end
 
   def join

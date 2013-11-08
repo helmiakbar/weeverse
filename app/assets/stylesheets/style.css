@@ -48,3 +48,40 @@
 #container-content #container-content-right #container-projects .project .project-desc span{font-size:0.8em; line-height:18px;}
 #container-content #container-content-right #container-projects .project .project-bottom .rating{border-right:1px solid #ccc; float:left; width:180px; height:35px; text-align:center; padding-top:8px;}
 #container-content #container-content-right #container-projects .project .project-bottom .detail{float:right; width:70px; height:35px; text-align:center; padding-top:8px;}
+
+#container-content #container-content-right #container-project-detail{margin:15px; border-radius:5px; border:1px solid black; background:#fff; padding:10px;}
+#container-content #container-content-right #container-project-detail #project-thumbnail{width:380px; float:left;}
+#container-content #container-content-right #container-project-detail #project-detail{width:610px; float:right;}
+#container-content #container-content-right #container-project-detail #project-detail #image-tree{float:left;}
+#container-content #container-content-right #container-project-detail #project-detail #project-title{float:left; margin-top:3px; margin-left:8px; margin-right:8px;}
+#container-content #container-content-right #container-project-detail #project-detail #project-title a{font-size:1.6em; margin-top:5px; color:#4563A1 !important;}
+#container-content #container-content-right #container-project-detail #project-detail #image-star{float:left; margin-top:2px;}
+#container-content #container-content-right #container-project-detail #project-detail #image-back{float:right;}
+#container-content #container-content-right #container-project-detail #project-detail #project-information{clear:both; font-size:0.8em; padding-top:5px;}
+#container-content #container-content-right #container-project-detail #project-detail #project-information span{color:#999;}
+#container-content #container-content-right #container-project-detail #project-detail #project-description{margin-top:10px; width:570px;}
+#container-content #container-content-right #container-project-detail #project-detail #project-description p{line-height:20px; margin-bottom:10px;}
+#container-content #container-content-right #container-project-detail #project-detail #project-other #join-project{float:left;}
+#container-content #container-content-right #container-project-detail #project-detail #project-other #join-project a{border-radius:5px;}
+#container-content #container-content-right #container-project-detail #project-detail #project-other #social-media{}
+#container-content #container-content-right #container-project-detail #project-detail #project-other #rating{float:right; margin-right:20px;}
+
+#container-content #container-content-right #container-project-detail #box-other-information{clear:both; padding:15px; height:55px;}
+#container-content #container-content-right #container-project-detail #box-other-information #box-other{border-radius:5px; padding:7px; width:120px; text-align:center; background:#448BCB; color:#fff; font-size:0.9em; float:left; margin-right:10px;}
+#container-content #container-content-right #container-project-detail #box-other-information #box-other span{background:#fff; color:#448BCB; border-radius:8px; font-size:0.7em; padding:2px; font-weight:bold; position:relative; top:-2px;}
+#container-content #container-content-right #container-project-detail #box-facebook-comment{clear:both; width:700px; margin:8px auto; text-align:center;}
+
+#container-project{padding:15px;}
+#container-project #box-title{height:35px;}
+#container-project #box-title #title{float:left;}
+#container-project #box-title #title span{font-size:1.8em;}
+#container-project #box-title #star{float:left; margin-left:10px;}
+#container-project #box-project-information{font-size:0.8em;}
+#container-project #box-project-information span{color:#999;}
+#container-project #box-project-description{margin-top:8px;}
+#container-project #box-project-description p{line-height:20px; font-size:0.9em;}
+#container-project #box-project-order-information{margin-top:10px; height:30px;}
+#container-project #box-project-other-information #box-join-project{float:left;}
+#container-project #box-project-other-information #box-join-project a{border-radius:5px;}
+#container-project #box-project-other-information #social-media{float:left; margin-left:90px;}
+#container-project #box-project-other-information #rating{float:right; margin-right:20px;}

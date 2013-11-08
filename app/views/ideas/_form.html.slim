@@ -17,7 +17,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag alt="POI: red" src="/assets/poi_red.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
       table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
@@ -109,7 +109,7 @@ javascript:
     });
 
     map = new L.Map('map', {
-      center: new L.LatLng(51.505, -0.09), 
+      center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
       zoom: 16,
       layers: [mapquest],
       zoomControl: true
@@ -142,6 +142,7 @@ javascript:
 
       },
       stop: function(evt, ui) {
+      $(".show").hide();
 
         var options = {
           pid: guid(),
@@ -208,115 +209,66 @@ javascript:
   // INSERT point
 
   function insertPoint(position,options) {
-  var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+    console.log(position);
+    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
 
-  $.get( url, function( data ) {
-   data = JSON.parse(data)
-   $("#idea_country").val(data.results[0].locations[0].adminArea4)
-   $("#idea_city").val(data.results[0].locations[0].adminArea5)
-   $("#idea_postal_code").val(data.results[0].locations[0].postalCode)
-   $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
-   $("#idea_long").val(data.results[0].locations[0].latLng.lng)
-  
-  });
-  var point = L.marker(position,options).addTo(map);
-  point.bindPopup(
-  '<a onClick="deletePoint(\'' + point.options.pid 
-  + '\');" href="#">Remove Me!</a>',
-  {
-  closeButton: false
+    $.get( url, function( data ) {
+      console.log(data);
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
+      $("#idea_country").val(data.results[0].locations[0].adminArea4)
+      $("#idea_city").val(data.results[0].locations[0].adminArea5)
+      $("#idea_postal_code").val(data.results[0].locations[0].postalCode)
+      $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
+      $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+    
+    });
+    var point = L.marker(position,options).addTo(map);
+
+    point.on('dragend', function(evt){
+      updatePoint(point);
+    });
+
+    markers.push(point);
+
   }
-  );
-
-  point.on('dragend', function(evt){
-  updatePoint(point);
-  });
-
-  markers.push(point);
-  
-  var postData = 
-  '<wfs:Transaction\n'
-  + '  service="WFS"\n'
-  + '  version="1.1.0"\n'
-  + '  xmlns:grp="http://lab.georepublic.info"\n'
-  + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
-  + '  xmlns:gml="http://www.opengis.net/gml"\n'
-  + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
-  + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
-  + '                      http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd\n'
-  + '                      http://lab.georepublic.info/geoserver/grp/wfs/DescribeFeatureType?typename=grp:points">\n'
-  + '  <wfs:Insert>\n'
-  + '    <grp:points>\n'
-  + '      <grp:pid>' + point.options.pid + '</grp:pid>\n'
-  + '      <grp:class>' + point.options.type + '</grp:class>\n'
-  + '      <grp:ip>' + user.ip + '</grp:ip>\n'
-  + '      <grp:the_geom>\n'
-  + '        <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">\n'
-  + '          <gml:coordinates decimal="." cs="," ts=" ">' + point.getLatLng().lat + ',' + point.getLatLng().lng + '</gml:coordinates>\n'
-  + '        </gml:Point>\n'
-  + '      </grp:the_geom>\n'
-  + '    </grp:points>\n'
-  + '  </wfs:Insert>\n'
-  + '</wfs:Transaction>';
-
-  $.ajax({
-  type: "POST",
-  url: gs.wfs,
-  dataType: "xml",
-  contentType: "text/xml",
-  data: postData,
-                  //TODO: Error handling
-                  success: function(xml) {        
-                          //TODO: User feedback
-                          }
-                          });
-
-   }
 
   // UPDATE point
   function updatePoint(point) {
+    console.log("lat: "+ point.getLatLng().lat);
+    console.log("long: "+ point.getLatLng().lng);
+    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
 
-  var postData = 
-  '<wfs:Transaction\n'
-  + '  service="WFS"\n'
-  + '  version="1.1.0"\n'
-  + '  xmlns:grp="http://lab.georepublic.info"\n'
-  + '  xmlns:wfs="http://www.opengis.net/wfs"\n'
-  + '  xmlns:ogc="http://www.opengis.net/ogc"\n'
-  + '  xmlns:gml="http://www.opengis.net/gml"\n'
-  + '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
-  + '  xsi:schemaLocation="http://www.opengis.net/wfs\n'
-  + '                      http://schemas.opengis.net/wfs/1.1.0/WFS-transaction.xsd">\n'
-  + '  <wfs:Update typeName="grp:points">\n'
-  + '    <wfs:Property>\n'
-  + '      <wfs:Name>the_geom</wfs:Name>\n'
-  + '      <wfs:Value>\n'
-  + '        <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">\n'
-  + '          <gml:coordinates decimal="." cs="," ts=" ">' + point.getLatLng().lat + ',' + point.getLatLng().lng + '</gml:coordinates>\n'
-  + '        </gml:Point>\n'
-  + '      </wfs:Value>\n'
-  + '    </wfs:Property>\n'
-  + '    <ogc:Filter>\n'
-  + '      <PropertyIsEqualTo>\n'
-  + '        <PropertyName>pid</PropertyName>\n'
-  + '        <Literal>' + point.options.pid + '</Literal>\n'
-  + '      </PropertyIsEqualTo>\n'
-  + '    </ogc:Filter>\n'
-  + '  </wfs:Update>\n'
-  + '</wfs:Transaction>';
+    $.get( url, function( data ) {
+      console.log(data);
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
+      $("#idea_country").val(data.results[0].locations[0].adminArea4)
+      $("#idea_city").val(data.results[0].locations[0].adminArea5)
+      $("#idea_postal_code").val(data.results[0].locations[0].postalCode)
+      $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
+      $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+    
+    });
+    var point = L.marker(position,options).addTo(map);
 
-  $.ajax({
-  type: "POST",
-  url: gs.wfs,
-  dataType: "xml",
-  contentType: "text/xml",
-  data: postData,
-                  //TODO: Error handling
-                  success: function(xml) {        
-                          //TODO: User feedback
-                          }
-                          });
-                          }
+    point.on('dragend', function(evt){
+      updatePoint(point);
+    });
+
+    markers.push(point);
+
+  }
 
   // DELETE point
   function deletePoint(pid) {
@@ -368,21 +320,3 @@ javascript:
   function guid() {
   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
   }
-/ = form_for @idea do |f|
-/   - if @idea.errors.any?
-/     #error_explanation
-/       h2 = "#{pluralize(@idea.errors.count, "error")} prohibited this idea from being saved:"
-/       ul
-/         - @idea.errors.full_messages.each do |message|
-/           li = message
-
-/   .field
-/     = f.label :title
-/     = f.text_field :title
-/   .field
-/     = f.label :description
-/     = f.text_field :description
-/   .field
-/     = f.label :image
-/     = f.file_field :image
-/   .actions = f.submit 'Save'

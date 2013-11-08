@@ -10,17 +10,17 @@
 <body>
 	<div id="container-header" class="row">
 		<div id="left-header" class="large-4 columns">
-			<% if user_signed_in? %>
-				<a href="#">
+			<%# if user_signed_in? %>
+				<!-- <a href="#">
 					<img src="assets/images/earth.png" width="40"/>
-					<h4><%= current_user.name %></h4>
-				</a>
-			<% else %>
-				<a href="#">
+					<h4><%#= current_user.name %></h4>
+				</a> -->
+			<%# else %>
+				<%= link_to projects_path do %>
 					<img src="assets/images/earth.png" width="40"/>
 					<h4>WeeVerse</h4>
-				</a>
-			<% end %>
+				<%- end %>
+			<%# end %>
 		</div>
 		<div id="middle-header" class="large-4 columns">
 			<input id="text-search" type="text" placeHolder="Search" name="search"/>

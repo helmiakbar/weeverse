@@ -98,7 +98,6 @@ javascript:
     attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
     subdomains: ['1','2','3','4']
   });
-  
   // Init application
   $(document).ready(function() {
     // Assign points to users
@@ -109,7 +108,7 @@ javascript:
     });
 
     map = new L.Map('map', {
-      center: new L.LatLng(51.505, -0.09), 
+      center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
       zoom: 16,
       layers: [mapquest],
       zoomControl: true
@@ -209,17 +208,22 @@ javascript:
   // INSERT point
 
   function insertPoint(position,options) {
-    console.log(position);
-    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+    var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
 
     $.get( url, function( data ) {
       console.log(data);
-      data = JSON.parse(data);
-      $("#project_country").val(data.results[0].locations[0].adminArea4)
-      $("#project_city").val(data.results[0].locations[0].adminArea5)
-      $("#project_postal_code").val(data.results[0].locations[0].postalCode)
-      $("#project_lat").val(data.results[0].locations[0].latLng.lat)
-      $("#project_long").val(data.results[0].locations[0].latLng.lng)
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
+      $("#project_country").val(address.results[0].locations[0].adminArea4)
+      $("#project_city").val(address.results[0].locations[0].adminArea5)
+      $("#project_postal_code").val(address.results[0].locations[0].postalCode)
+      $("#project_lat").val(address.results[0].locations[0].latLng.lat)
+      $("#project_long").val(address.results[0].locations[0].latLng.lng)
     
     });
     var point = L.marker(position,options).addTo(map);
@@ -236,6 +240,32 @@ javascript:
   function updatePoint(point) {
     console.log("lat: "+ point.getLatLng().lat);
     console.log("long: "+ point.getLatLng().lng);
+    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+    $.get( url, function( data ) {
+      console.log(data);
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
+      $("#project_country").val(address.results[0].locations[0].adminArea4)
+      $("#project_city").val(address.results[0].locations[0].adminArea5)
+      $("#project_postal_code").val(address.results[0].locations[0].postalCode)
+      $("#project_lat").val(address.results[0].locations[0].latLng.lat)
+      $("#project_long").val(address.results[0].locations[0].latLng.lng)
+    
+    });
+    var point = L.marker(position,options).addTo(map);
+
+    point.on('dragend', function(evt){
+      updatePoint(point);
+    });
+
+    markers.push(point);
+
   }
 
   // DELETE point

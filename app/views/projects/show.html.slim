@@ -1,27 +1,93 @@
 link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
-.row
-  .small-3.columns
-    = image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 200px;')
-  .small-4.columns style="left: -560px;"
-    p 
-      = @project.title 
-    p 
-      = @project.description
-    p 
-      = link_to 'join', join_path(@project.id), class: "medium button"
-      / = link_to 'Back', projects_path
-    p style="right: 100px"
-      input.star name="star1" type="radio"
-      input.star name="star1" type="radio"
-      input.star name="star1" type="radio"
-      input.star name="star1" type="radio"
-      input.star name="star1" type="radio"
+#map style="height: 35% !important; width: 25% !important; position:absolute !important; right: 20px"
 
-#map style="height: 35% !important; width: 25% !important; left: 69%; top: -154px;"
-
-#disqus_thread style='width: 592px; margin-left: 325px; margin-top: -230px;'
+#container-project.row
+  .large-3.columns
+    = image_tag(@project.image, :action => 'join', style: 'height: 150px; width: 350px;')
+  .large-5.columns
+    #box-title
+      #title
+        span = @project.title
+      #star
+        img src="/assets/star-white.jpg" width="28"
+    #box-project-information
+      img src="/assets/tree.jpg" width="18"
+      | Project By #{@project.creator} in #{@project}
+    #box-project-description
+      p
+        = @project.description
+    #box-project-other-information
+      #box-join-project
+        a.button.small.primary href="#" Join Project
+      #social-media
+        a href="#"
+          img src="/assets/tree.jpg"
+        | &nbsp;&nbsp;
+        a href="#"
+          img src="/assets/tree.jpg"
+      #rating
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-white.jpg"
+        img src="/assets/love-white.jpg"
+    div style="clear:both; text-align:center;"
+      #disqus_thread
+  .large-4.columns
+    div style="text-align:center; margin-top:5px; font-size:0.9em;"
+      | North Vancouver BC
+      a href="#" style="display:block;"
+#container-bar.row
+  .large-4.columns.top-bar-content
+    = link_to 'Show All', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+  .large-8.columns.top-bar-content
+    - if user_signed_in?
+      = link_to 'Add to The Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+  #container-content.row
+    #container-content-left.large-2.columns
+      .row
+        #box-question.large-12.columns
+        .large-12.columns.left-menu
+          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          a href="#" | Media
+        .large-12.columns.left-menu
+          a href="#" | Places
+    #container-content-right.large-10.columns
+      .row
+        #container-projects
+          - @projects.each do |project|
+            .project
+              .title
+                img src="/assets/tree.jpg"
+                = link_to "#{project.title}", project
+                img src="/assets/star-white.jpg" style="float:right;"
+              .image
+                - if project.image.present?
+                  = link_to big_path(project.id) do
+                    = image_tag(project.image, style: 'width: 100%; height: 158px;')
+                  / = link_to "#{image_tag(project.image, style: 'width: 100%; height: 158px;')}", big_path
+                - else
+                  = link_to big_path(project.id) do
+                    img src="/assets/worldwide.jpg" style="width: 100%;"
+              .project-info
+                | Project By #{project.creator} in #{project.country}
+              .project-desc
+                span
+                  = project.description
+              .project-bottom
+                .rating
+                  img src="/assets/love-red.jpg"
+                  img src="/assets/love-red.jpg"
+                  img src="/assets/love-red.jpg"
+                  img src="/assets/love-white.jpg"
+                  img src="/assets/love-white.jpg"
+                .detail
+                  img src="/assets/love-white.jpg"
 
 javascript:
   var dataLocation = #{raw @project1.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};

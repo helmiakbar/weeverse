@@ -9,8 +9,9 @@ class ProjectsController < ApplicationController
   def index
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
-      @projects = Project.where(city: @location.city_name)
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      @projects = Project.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+      @projects1 = Project.all
     else
       @projects = Project.all
     end
@@ -18,9 +19,9 @@ class ProjectsController < ApplicationController
 
   def all
     @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
     @projects = Project.where(city: @location.city_name)
-    @ideas = Idea.where(city: location.city_name)
+    @ideas = Idea.where(city: @location.city_name)
   end
 
   def big

@@ -6,15 +6,13 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 #container-bar.row
   .large-4.columns.top-bar-content
     - if user_signed_in?
-      a data-dropdown="drop1" href="#"
-        ul#drop1.f-dropdown data-dropdown-content=""
-          li
-            a href="#"
-          li
-            a href="#"
-          li
-            a href="#"
-      = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+      = link_to 'location', all_path, id: "btn-add", class: "tiny button"
+      = select_tag 'test', options_for_select(@projects1.collect { |a| [a.country, a.id]}), style: "width: 100px; margin-top: 15px;", prompt: "Country"
+      = select_tag 'test', options_for_select(@projects1.collect { |a| [a.city, a.id]}), style: "width: 100px; margin-top: 15px;", prompt: "City"
+      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+      / = link_to 'location1', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px;"
   .large-8.columns.top-bar-content
     - if user_signed_in?
       = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"

@@ -7,9 +7,9 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
   .large-4.columns.top-bar-content
     - if user_signed_in?
       = link_to 'location', all_path, id: "btn-add", class: "tiny button"
-      = select_tag 'project[country]', options_for_select(@countries.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
-      = select_tag 'project[region_name]', options_for_select(@regions.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
-      = select_tag 'project[city]', options_for_select(@cities.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
+      = select_tag 'project[country]', options_for_select(@countries.uniq.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
+      = select_tag 'project[region_name]', options_for_select(@regions.uniq.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
+      = select_tag 'project[city]', options_for_select(@cities.uniq.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
 
   .large-8.columns.top-bar-content
     - if user_signed_in?

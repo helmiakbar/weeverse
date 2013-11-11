@@ -5,17 +5,43 @@ class IdeasController < ApplicationController
   # GET /ideas.json
   def index
     if user_signed_in?
+      @countries = @regions = @cities = []
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+      ideas1 = Idea.all   
+      @countries = ideas1.map(&:country).uniq
+      @regions = ideas1.map(&:region_name).uniq
+      @cities = ideas1.map(&:city).uniq
+    else
+      @ideas = Idea.all
+    end
+  end
+
+  def idea_show
+    @ideas = []
+    if params[:type].eql?("country")
+      ideas = Idea.where(country: params[:country]) 
+    elsif params[:type].eql?("region_name")
+      ideas = Idea.where('country = ? AND region_name = ?', params[:country], params[:region_name])
+    else
+      ideas = Idea.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region_name], params[:city])
+    end
+    @ideas = ideas.uniq
+    respond_to :js
+  end
+
+  # GET /ideas/1
+  # GET /ideas/1.json
+  def show
+    @idea1 = Idea.where(id: params[:id])
+    if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
       @ideas = Idea.where(city: @location.city_name)
     else
       @ideas = Idea.all
     end
-  end
-
-  # GET /ideas/1
-  # GET /ideas/1.json
-  def show
   end
 
   # GET /ideas/new
@@ -36,6 +62,9 @@ class IdeasController < ApplicationController
     # location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
     idea_params[:lat].blank? ? idea_params[:lat] << location.latitude.to_s : idea_params[:lat]
     idea_params[:long].blank? ? idea_params[:long] << location.longitude.to_s : idea_params[:long]
+    idea_params[:region_name].blank? ? idea_params[:region_name] << location.region_name : idea_params[:region_name]
+    idea_params[:country].blank? ? idea_params[:country] << location.country_name : idea_params[:country]
+    idea_params[:city].blank? ? idea_params[:city] << location.city_name : idea_params[:city]
     @idea = Idea.new(idea_params)
 
     respond_to do |format|
@@ -81,6 +110,6 @@ class IdeasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator)
+      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name)
     end
 end

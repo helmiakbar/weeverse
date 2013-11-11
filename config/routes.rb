@@ -1,7 +1,18 @@
 Weeverse::Application.routes.draw do
-  resources :ideas
+  resources :ideas do
+    collection do 
+      get "idea_show"
+    end
+  end
 
-  resources :projects
+  # resources :projects
+
+  resources :projects do 
+    collection do
+      get "project_show"
+    end
+  end
+  
   get "join/:id" => "projects#join", as: :join
   get "all" => "projects#all"
   get "big/:id" => "projects#big", as: :big

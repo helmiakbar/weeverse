@@ -7,19 +7,20 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
   .large-4.columns.top-bar-content
     - if user_signed_in?
       = link_to 'location', all_path, id: "btn-add", class: "tiny button"
-      = select_tag 'test', options_for_select(@projects1.collect { |a| [a.country, a.id]}), style: "width: 100px; margin-top: 15px;", prompt: "Country"
-      = select_tag 'test', options_for_select(@projects1.collect { |a| [a.city, a.id]}), style: "width: 100px; margin-top: 15px;", prompt: "City"
-      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
-      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
-      / = link_to 'location1', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
-      / = link_to 'location', all_path, id: "btn-add", class: "button", style: "margin-top: 6px;"
+      = select_tag 'project[country]', options_for_select(@countries.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
+      = select_tag 'project[region_name]', options_for_select(@regions.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
+      = select_tag 'project[city]', options_for_select(@cities.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
+
   .large-8.columns.top-bar-content
     - if user_signed_in?
       = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+  
   #container-content.row
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
+        .large-12.columns.left-menu
+          = link_to 'All Content', all_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
           = link_to 'Projects', projects_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
@@ -28,44 +29,17 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
           a href="#" | Media
         .large-12.columns.left-menu
           a href="#" | Places
+
     #container-content-right.large-10.columns
       .row
         #container-projects
-          - @projects.each do |project|
-            .project
-              .title
-                img src="/assets/tree.jpg"
-                = link_to "#{project.title}", project
-                img src="/assets/star-white.jpg" style="float:right;"
-              .image
-                - if project.image.present?
-                  = link_to big_path(project.id) do
-                    = image_tag(project.image, style: 'width: 100%; height: 158px;')
-                  / = link_to "#{image_tag(project.image, style: 'width: 100%; height: 158px;')}", big_path
-                - else
-                  = link_to big_path(project.id) do
-                    img src="/assets/worldwide.jpg" style="width: 100%;"
-              .project-info
-                | Project By #{project.creator} in #{project.country}
-              .project-desc
-                span
-                  = project.description
-              .project-bottom
-                .rating
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-white.jpg"
-                  img src="/assets/love-white.jpg"
-                .detail
-                  img src="/assets/love-white.jpg"
+          == render 'project_city_list'
+          
+
 javascript:
-  var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description] }};
-  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
-  for (i = 0; i < dataLocation.length; i++) {
-    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
-    marker.bindPopup(dataLocation[i][2]).openPopup();
-  }
-  L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-  }).addTo(map);
+  var project_show = function(type) {
+    $.get('/projects/project_show?type=' + type + '&country=' + $('#project_country').val() + '&region_name=' + $('#project_region_name').val() + '&city=' + $('#project_city').val());
+    map.remove(); 
+  };
+
+  

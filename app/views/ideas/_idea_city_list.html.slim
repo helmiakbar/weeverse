@@ -1,0 +1,25 @@
+- @ideas.each do |idea|
+  .project
+    .title
+      img src="/assets/tree.jpg"
+      = link_to "#{idea.title}", idea
+      img src="/assets/star-white.jpg" style="float:right;"
+    .image
+      - if idea.image.present?
+        = image_tag(idea.image, style: 'width: 100%; height: 158px;')
+      - else
+        img src="/assets/worldwide.jpg" style="width: 100%;"
+    .project-info
+      | Project By #{idea.creator} in #{idea.city}
+    .project-desc
+      span
+        = idea.description
+    .project-bottom
+      .rating
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-white.jpg"
+        img src="/assets/love-white.jpg"
+      .detail
+        img src="/assets/love-white.jpg"

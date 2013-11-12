@@ -15,7 +15,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         img src="/assets/star-white.jpg" width="28"
     #box-project-information
       img src="/assets/tree.jpg" width="18"
-      | Project By #{@project.creator} in #{@project}
+      | Project By #{@project.creator} in #{@project.city}
     #box-project-description
       p
         = @project.description

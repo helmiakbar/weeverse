@@ -36,8 +36,10 @@ class ProjectsController < ApplicationController
 
   def all
     @countries = @regions = @cities = []
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    if user_signed_in?
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    end
     @projects = Project.all
     @ideas = Idea.all
     @countries = @projects.map(&:country).uniq

@@ -120,8 +120,13 @@ javascript:
        var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#project_city").val() +"},options:{thumbMaps:false}}"
 
       $.get( url, function( data ) {
-       console.log(data)
-       data = JSON.parse(data)
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
        lat = data.results[0].locations[0].latLng.lat
        lng = data.results[0].locations[0].latLng.lng
        $("#idea_lat").val(data.results[0].locations[0].latLng.lat)

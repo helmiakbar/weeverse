@@ -2,6 +2,7 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 #map style="height: 35% !important; width: 25% !important; position:absolute !important; right: 20px"
+#map2.hide style="height: 180px"
 
 #container-project.row
   .large-3.columns
@@ -41,18 +42,19 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
       a href="#" style="display:block;"
 #container-bar.row
   .large-4.columns.top-bar-content
-    = link_to 'Show All', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+    = link_to 'Show Map', "javascript:void(0)", id: "btn-show" , class: "button", style: "margin-top: 6px"
+    = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
   .large-8.columns.top-bar-content
     - if user_signed_in?
-      = link_to 'Add to The Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+      = link_to 'Add to The Project', new_project_path(parent_id: @project.id), class: "button", style: "margin-top: 6px; margin-left: 80%"
   #container-content.row
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
         .large-12.columns.left-menu
-          = link_to 'All Content', all_path, style: 'margin-left: 8px'
+          = link_to 'All Content', all_path(project_id: @project), style: 'margin-left: 8px'
         .large-12.columns.left-menu
-          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
+          = link_to 'Projects', projects_path(id: @project), style: 'margin-left: 8px'
         .large-12.columns.left-menu
           = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
@@ -92,11 +94,37 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
                   img src="/assets/love-white.jpg"
 
 javascript:
+  $("#btn-show").bind("click", function(){
+    $("#btn-hide").show();
+    $("#map2").show();
+    $("#btn-show").hide();
+    $("#map").hide();
+    $("#container-project.row").hide();
+    var dataLocation2 = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+    var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+    for (i = 0; i < dataLocation2.length; i++) {
+      var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])]).addTo(map2);
+    }
+    L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    }).addTo(map2);
+  })
+
+  $("#btn-hide").bind("click", function(){
+    $("#btn-hide").hide();
+    $("#map2").hide();
+    $("#btn-show").show();
+    $("#map").show();
+    $("#container-project.row").show();
+  });
+  
   var dataLocation = #{raw @project1.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+  
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
   for (i = 0; i < dataLocation.length; i++) {
     var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
-  }
+  } 
+  
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);

@@ -1,18 +1,28 @@
 link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
 script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
-#map style="height: 180px"
+- if @project_id.nil?
+  #map style="height: 180px"
+- else
+  == render 'head_content'
 
 #container-bar.row
   .large-4.columns.top-bar-content
     - if user_signed_in?
-      = link_to 'location', all_path, id: "btn-add", class: "tiny button"
-      = select_tag 'project[country]', options_for_select(@countries.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
-      = select_tag 'project[region_name]', options_for_select(@regions.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
-      = select_tag 'project[city]', options_for_select(@cities.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
+      - if @project_id.nil?
+        = link_to 'location', all_path, id: "btn-add", class: "tiny button"
+        = select_tag 'project[country]', options_for_select(@countries.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
+        = select_tag 'project[region_name]', options_for_select(@regions.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
+        = select_tag 'project[city]', options_for_select(@cities.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
+      - else
+       = link_to 'Show Map', "javascript:void(0)", id: "btn-show" , class: "button", style: "margin-top: 6px"
+       = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
   .large-8.columns.top-bar-content
     - if user_signed_in?
-      = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+      - if @project_id.nil?
+        = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+      - else
+        = link_to 'Add to The Project', new_project_path(parent_id: @project.id), class: "button", style: "margin-top: 6px; margin-left: 80%"
   #container-content.row
     #container-content-left.large-2.columns
       .row
@@ -20,7 +30,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         .large-12.columns.left-menu
           = link_to 'All Content', all_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
-          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
+          = link_to 'Projects', !@project_id.nil? ? project_path(id: @project_id) : projects_path , style: 'margin-left: 8px'
         .large-12.columns.left-menu
           = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
@@ -87,6 +97,30 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
                   img src="/assets/love-white.jpg" 
 
 javascript:
+  $("#btn-show").bind("click", function(){
+    $("#btn-hide").show();
+    $("#map2").show();
+    $("#btn-show").hide();
+    $("#map").hide();
+    $("#container-project.row").hide();
+    var dataLocation2 = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+    var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+    for (i = 0; i < dataLocation2.length; i++) {
+      var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])]).addTo(map2);
+    }
+    L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    }).addTo(map2);
+  })
+
+  $("#btn-hide").bind("click", function(){
+    $("#btn-hide").hide();
+    $("#map2").hide();
+    $("#btn-show").show();
+    $("#map").show();
+    $("#container-project.row").show();
+  });
+  
   var project_show = function(type) {
     $.get('/projects/project_show?type=' + type + '&country=' + $('#project_country').val() + '&region_name=' + $('#project_region_name').val() + '&city=' + $('#project_city').val())
   };

@@ -11,13 +11,17 @@ class ProjectsController < ApplicationController
       @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
-      @projects = Project.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+      if params[:project_id]
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
+      else
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name)
+      end
       projects1 = Project.all   
       @countries = projects1.map(&:country).uniq
       @regions = projects1.map(&:region_name).uniq
       @cities = projects1.map(&:city).uniq
     else
-      @projects = Project.all
+      @projects = Project.where(parent_id: nil)
     end
   end
 
@@ -39,9 +43,19 @@ class ProjectsController < ApplicationController
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      @project1 = Project.where(id: params[:id])
+      if params[:project_id]
+        @project_id = params[:project_id]
+        @project = Project.find(params[:project_id])
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
+      else
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name)
+      end
+      @ideas = Idea.all
+    else
+      @projects = Project.where(parent_id: nil)
+      @ideas = Idea.all  
     end
-    @projects = Project.all
-    @ideas = Idea.all
     @countries = @projects.map(&:country).uniq
     @regions = @projects.map(&:region_name).uniq
     @cities = @projects.map(&:city).uniq
@@ -64,9 +78,9 @@ class ProjectsController < ApplicationController
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
-      @projects = Project.where(city: @location.city_name)
+      @projects = Project.where(city: @location.city_name, parent_id: params[:id])
     else
-      @projects = Project.all
+      @projects = Project.where(parent_id: nil)
     end
   end
 
@@ -75,6 +89,7 @@ class ProjectsController < ApplicationController
     @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
     # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
     @project = Project.new
+    @project.parent_id = params[:parent_id] if params[:parent_id]
   end
 
   # GET /projects/1/edit
@@ -136,6 +151,6 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name)
+      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id)
     end
-end
+  end

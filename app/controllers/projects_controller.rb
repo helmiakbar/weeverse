@@ -10,7 +10,7 @@ class ProjectsController < ApplicationController
     if user_signed_in?
       @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:project_id]
         @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
       else
@@ -42,7 +42,7 @@ class ProjectsController < ApplicationController
     @countries = @regions = @cities = []
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @project1 = Project.where(id: params[:id])
       if params[:project_id]
         @project_id = params[:project_id]
@@ -76,9 +76,13 @@ class ProjectsController < ApplicationController
   def show
     @project1 = Project.where(id: params[:id])
     if user_signed_in?
+      if params[:id]
+        @projects = Project.where(parent_id: params[:id])
+      else
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
-      @projects = Project.where(city: @location.city_name, parent_id: params[:id])
+        # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+        @projects = Project.where(city: @location.city_name, parent_id: params[:id])
+      end
     else
       @projects = Project.where(parent_id: nil)
     end
@@ -87,7 +91,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new
   def new
     @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @project = Project.new
     @project.parent_id = params[:parent_id] if params[:parent_id]
   end
@@ -100,7 +104,7 @@ class ProjectsController < ApplicationController
   # POST /projects.json
   def create
     location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    # location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     project_params[:lat].blank? ? project_params[:lat] << location.latitude.to_s : project_params[:lat]
     project_params[:long].blank? ? project_params[:long] << location.longitude.to_s : project_params[:long]
     project_params[:region_name].blank? ? project_params[:region_name] << location.region_name : project_params[:region_name]

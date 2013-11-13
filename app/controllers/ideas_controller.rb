@@ -7,7 +7,7 @@ class IdeasController < ApplicationController
     if user_signed_in?
       @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name)
       ideas1 = Idea.all   
       @countries = ideas1.map(&:country).uniq
@@ -37,7 +37,7 @@ class IdeasController < ApplicationController
     @idea1 = Idea.where(id: params[:id])
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @ideas = Idea.where(city: @location.city_name)
     else
       @ideas = Idea.all
@@ -47,7 +47,7 @@ class IdeasController < ApplicationController
   # GET /ideas/new
   def new
     @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @idea = Idea.new
   end
 
@@ -59,7 +59,7 @@ class IdeasController < ApplicationController
   # POST /ideas.json
   def create
     location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # location = GeoIP.new('lib/GeoLiteCity.dat').city('24.84.20.149')
+    # location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     idea_params[:lat].blank? ? idea_params[:lat] << location.latitude.to_s : idea_params[:lat]
     idea_params[:long].blank? ? idea_params[:long] << location.longitude.to_s : idea_params[:long]
     idea_params[:region_name].blank? ? idea_params[:region_name] << location.region_name : idea_params[:region_name]

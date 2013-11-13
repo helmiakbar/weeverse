@@ -23,3 +23,14 @@
         img src="/assets/love-white.jpg"
       .detail
         img src="/assets/love-white.jpg"
+
+javascript:
+  var dataLocation = #{raw @ideas.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description] }};
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
+  for (i = 0; i < dataLocation.length; i++) {
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
+    marker.bindPopup(dataLocation[i][2]).openPopup();
+  }
+  L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+  }).addTo(map);

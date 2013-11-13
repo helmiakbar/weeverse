@@ -2,6 +2,8 @@ Weeverse::Application.routes.draw do
   resources :ideas do
     collection do 
       get "idea_show"
+      get "idea_region"
+      get "idea_city"
     end
   end
 
@@ -10,6 +12,8 @@ Weeverse::Application.routes.draw do
   resources :projects do 
     collection do
       get "project_show"
+      get "project_region"
+      get "project_city"
     end
   end
   

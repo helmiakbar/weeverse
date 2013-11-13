@@ -27,13 +27,21 @@ class ProjectsController < ApplicationController
 
   def project_show
     @projects = []
-    if params[:type].eql?("country")
-      projects = Project.where(country: params[:country]) 
-    elsif params[:type].eql?("region_name")
-      projects = Project.where('country = ? AND region_name = ?', params[:country], params[:region_name])
-    else
-      projects = Project.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region_name], params[:city])
-    end
+    projects = Project.where(country: params[:country]) 
+    @projects = projects.uniq
+    respond_to :js
+  end
+
+  def project_region
+    @projects = []
+    projects = Project.where('country = ? AND region_name = ?', params[:country], params[:region])
+    @projects = projects.uniq
+    respond_to :js
+  end
+
+  def project_city
+    @projects = []
+    projects = Project.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region], params[:city])
     @projects = projects.uniq
     respond_to :js
   end

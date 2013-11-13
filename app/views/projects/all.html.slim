@@ -10,10 +10,38 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
   .large-4.columns.top-bar-content
     - if user_signed_in?
       - if @project_id.nil?
-        = link_to 'location', all_path, id: "btn-add", class: "tiny button"
-        = select_tag 'project[country]', options_for_select(@countries.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.country_name}", onChange: "project_show('country');"
-        = select_tag 'project[region_name]', options_for_select(@regions.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.region_name}", onChange: "project_show('region_name');"
-        = select_tag 'project[city]', options_for_select(@cities.collect { |a| [a, a]}), style: "width: 100px; margin-top: 15px;", prompt: "#{@location.city_name}", onChange: "project_show('city');"
+        ul.button-group style="margin-top: 12px;"
+          li
+            a.small.button href="#" All > 
+          li
+            a.small.button#country country-name="#{@location.country_name}" href="javascript:void(0);" onClick="project_show('country');" #{@location.country_name} >
+          li
+            a.small.button#region_name region-name="#{@location.region_name}" href="javascript:void(0);" onClick="project_region('region');" #{@location.region_name} >
+          li
+            a.small.button#city_name city-name="#{@location.city_name}" href="javascript:void(0);" onClick="project_city('city');" #{@location.city_name}
+          li
+            a.button.dropdown#city data-dropdown="drop2" href="#" style="height: 27px; padding-right: 33px; padding-left: 9px"
+            br
+              ul#drop2.f-dropdown
+                li
+                  input#project_country.span2 name="project[country]" placeholder= "Country"
+                  ul.button-group#group1
+                    li
+                      a.small.button#btn-filter1 href="javascript:void(0);" style="width: 53px;" Filter
+                    li
+                      a.small.button#add-region href="javascript:void(0);" style="width: 90px;" Add Region 
+                li#region-field style="display: none;"
+                  input#project_region_name.span2 name="project[region_name]" placeholder= "Region Name" 
+                  ul.button-group#group2
+                    li
+                      a.small.button#btn-filter2 href="javascript:void(0);" style="width: 53px;" Filter
+                    li
+                      a.small.button#add-city href="javascript:void(0);" style="width: 90px;" Add City
+                li#city-field style="display: none;"
+                  input#project_city.span2 name="project[city]" placeholder= "City"
+                  ul.button-group#group3
+                    li
+                      a.small.button#btn-filter3 href="javascript:void(0);" style="width: 53px;" Filter
       - else
        = link_to 'Show Map', "javascript:void(0)", id: "btn-show" , class: "button", style: "margin-top: 6px"
        = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
@@ -120,10 +148,6 @@ javascript:
     $("#map").show();
     $("#container-project.row").show();
   });
-  
-  var project_show = function(type) {
-    $.get('/projects/project_show?type=' + type + '&country=' + $('#project_country').val() + '&region_name=' + $('#project_region_name').val() + '&city=' + $('#project_city').val())
-  };
   var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
   for (i = 0; i < dataLocation.length; i++) {
@@ -132,3 +156,44 @@ javascript:
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);
+  var project_show = function(type) {
+    $.get('/projects/project_show.js?type=' + type + '&country=' + $("#country").attr("country-name"));
+    map.remove(); 
+  };
+  var project_region = function(type) {
+    $.get('/projects/project_region.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name"));
+    map.remove(); 
+  };
+  var project_city = function(type) {
+    $.get('/projects/project_city.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name") + '&city=' + $('#city_name').attr("city-name") );
+    map.remove(); 
+  };
+  $("#add-region").bind("click", function(){
+    $("#region-field").show();
+    $("#group1").hide();
+  });
+  $("#add-city").bind("click", function(){
+    $("#city-field").show();
+    $("#group2").hide();
+  });
+  $("#btn-filter1").bind("click", function(){
+    $("#country").text($("#project_country").val());
+    $("#country").attr('country-name',$("#project_country").val());
+    $("#region_name").hide();
+    $("#city_name").hide();
+  });
+  $("#btn-filter2").bind("click", function(){
+    $("#country").text($("#project_country").val());
+    $("#country").attr('country-name',$("#project_country").val());
+    $("#region_name").text($("#project_region_name").val());
+    $("#region_name").attr('region-name',$("#project_region_name").val());
+    $("#city_name").hide();
+  });
+  $("#btn-filter3").bind("click", function(){
+    $("#country").text($("#project_country").val());
+    $("#country").attr('country-name',$("#project_country").val());
+    $("#region_name").text($("#project_region_name").val());
+    $("#region_name").attr('region-name',$("#project_region_name").val());
+    $("#city_name").text($("#project_city").val());
+    $("#city_name").attr('city-name',$("#project_city").val());
+  });

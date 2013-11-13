@@ -20,13 +20,21 @@ class IdeasController < ApplicationController
 
   def idea_show
     @ideas = []
-    if params[:type].eql?("country")
-      ideas = Idea.where(country: params[:country]) 
-    elsif params[:type].eql?("region_name")
-      ideas = Idea.where('country = ? AND region_name = ?', params[:country], params[:region_name])
-    else
-      ideas = Idea.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region_name], params[:city])
-    end
+    ideas = Idea.where(country: params[:country]) 
+    @ideas = ideas.uniq
+    respond_to :js
+  end
+
+  def idea_region
+    @ideas = []
+    ideas = Idea.where('country = ? AND region_name = ?', params[:country], params[:region])
+    @ideas = ideas.uniq
+    respond_to :js
+  end
+
+  def idea_city
+    @ideas = []
+    ideas = Idea.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region], params[:city])
     @ideas = ideas.uniq
     respond_to :js
   end

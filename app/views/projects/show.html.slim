@@ -95,13 +95,14 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 javascript:
   $("#btn-show").bind("click", function(){
+    map.remove();
     $("#btn-hide").show();
     $("#map2").show();
     $("#btn-show").hide();
     $("#map").hide();
     $("#container-project.row").hide();
     var dataLocation2 = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-    var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+    var map2 = L.map('map2').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 13);
     for (i = 0; i < dataLocation2.length; i++) {
       var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])]).addTo(map2);
     }

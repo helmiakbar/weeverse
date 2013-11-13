@@ -91,6 +91,7 @@ javascript:
     $("#city_name").hide();
   });
   $("#btn-filter2").bind("click", function(){
+    $("#region_name").show();
     $("#country").text($("#project_country").val());
     $("#country").attr('country-name',$("#project_country").val());
     $("#region_name").text($("#project_region_name").val());
@@ -98,6 +99,7 @@ javascript:
     $("#city_name").hide();
   });
   $("#btn-filter3").bind("click", function(){
+    $("#city_name").show();
     $("#country").text($("#project_country").val());
     $("#country").attr('country-name',$("#project_country").val());
     $("#region_name").text($("#project_region_name").val());

@@ -23,11 +23,17 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
       #box-join-project
         a.button.small.primary href="#" Join Project
       #social-media
+        = link_to "https://www.facebook.com/dialog/feed?app_id= #{Settings.facebook.app_id}&link= #{project_url(@project.id)}&name=#{url_encode(@project.title)}&description=#{url_encode("Like making a difference in the community? Check out this great project I found on @weeverse.  You can help fund it, or set up a project of your own to Get RUUTed! ")}&redirect_uri=#{root_url}", :target => :blank do
+          = image_tag('/assets/webicon-facebook-m.png')
+        | &nbsp;
         a href="#"
-          img src="/assets/tree.jpg"
-        | &nbsp;&nbsp;
+          img src="/assets/webicon-twitter-m.png"
+        | &nbsp;
         a href="#"
-          img src="/assets/tree.jpg"
+          img src="/assets/webicon-pinterest-m.png"
+        | &nbsp;
+        a href="#"
+          img src="/assets/webicon-mail-m.png"
       #rating
         img src="/assets/love-red.jpg"
         img src="/assets/love-red.jpg"
@@ -140,3 +146,11 @@ javascript:
       dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
+
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=543583535725154";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));

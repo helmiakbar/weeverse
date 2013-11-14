@@ -31,7 +31,7 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
           img src="/assets/webicon-twitter-m.png"
         | &nbsp;
         / a data-pin-config="above" data-pin-do="buttonPin" href="http://www.pinterest.com/pin/create/button/\r\n?url=(http%3A%2F%2F#{project_url(@project.id)}&media=#{@project.image.path}\r\n)&description=#{@project.description}"
-        = link_to "http://www.pinterest.com/pin/create/button/\r\n?url=#{project_path(@project.id)}&media=#{url_encode(@project.image.url)}\r\n&description=#{@project.description}" do 
+        = link_to "http://www.pinterest.com/pin/create/button/\r\n?url=#{project_url(@project.id)}&media=#{url_encode(@project.image.url)}\r\n&description=#{@project.description}" do 
           = image_tag('/assets/webicon-pinterest-m.png')
         / | &nbsp;
         / a href="#"

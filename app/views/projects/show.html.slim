@@ -30,9 +30,9 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
         a href="#" class= "tw-count"
           img src="/assets/webicon-twitter-m.png"
         | &nbsp;
-        a data-pin-config="above" data-pin-do="buttonPin" href="http://www.pinterest.com/pin/create/button/\r\n?url=(http%3A%2F%2Fwww.weeverse-dev.herokuapp.com)" 
-        / a href="#"
-        /   img src="/assets/webicon-pinterest-m.png"
+        / a data-pin-config="above" data-pin-do="buttonPin" href="http://www.pinterest.com/pin/create/button/\r\n?url=(http%3A%2F%2F#{project_url(@project.id)}&media=#{@project.image.path}\r\n)&description=#{@project.description}"
+        = link_to "http://www.pinterest.com/pin/create/button/\r\n?url=(http%3A%2F%2F#{project_url(@project.id)}&media=#{@project.image.path}\r\n)&description=#{@project.description}" do 
+          = image_tag('/assets/webicon-pinterest-m.png')
         / | &nbsp;
         / a href="#"
         /   img src="/assets/webicon-mail-m.png"

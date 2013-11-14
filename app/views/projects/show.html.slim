@@ -26,7 +26,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         = link_to "https://www.facebook.com/dialog/feed?app_id= #{Settings.facebook.app_id}&link= #{project_url(@project.id)}&name=#{url_encode(@project.title)}&description=#{url_encode("Like making a difference in the community? Check out this great project I found on @weeverse.  You can help fund it, or set up a project of your own to Get RUUTed! ")}&redirect_uri=#{root_url}", :target => :blank do
           = image_tag('/assets/webicon-facebook-m.png')
         | &nbsp;
-        a href="#"
+        a href="#" class= "tw-count"
           img src="/assets/webicon-twitter-m.png"
         | &nbsp;
         a href="#"
@@ -154,3 +154,21 @@ javascript:
     js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=543583535725154";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
+
+  $('.tw-count').click(function(e) {
+    e.preventDefault();
+    var width  = 575,
+        height = 400,
+        left   = ($(window).width()  - width)  / 2,
+        top    = ($(window).height() - height) / 2,
+        url    = "#{request.protocol}twitter.com/share?url=#{project_url(@project.id)}&text=Like%20making%20a%20difference%20in%20the%20community%3F%20Check%20out%20this%20great%20project%20I%20found%20on%20%40weeverse%20&hashtags=Getweeverseproject",
+        opts   = 'status=1' +
+                 ',width='  + width  +
+                 ',height=' + height +
+                 ',top='    + top    +
+                 ',left='   + left;
+
+    window.open(url, 'twitter', opts);
+  })
+
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');

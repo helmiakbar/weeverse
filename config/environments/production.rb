@@ -65,9 +65,13 @@ Weeverse::Application.configure do
     jquery.rating.pack.js projects.js.coffee application.css foundation.css foundation_and_overrides.scss ideas.css.scss
     jquery.rating.css projects.css.scss scaffolds.css.scss style.css )
 
+  # ActionMailer Config
+  config.action_mailer.default_url_options = { :host => 'http://weeverse-dev.herokuapp.com/' }
+  config.action_mailer.delivery_method = :smtp
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).
@@ -81,4 +85,17 @@ Weeverse::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  # Change to true to allow email to be sent during development
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default :charset => "utf-8"
+
+  config.action_mailer.smtp_settings = {
+    :address              => "smtp.gmail.com",
+    :port                 => 587,
+    :domain               => '41studio.com',
+    :user_name            => 'test-do-not-reply@41studio.com',
+    :password             => 'Fd5(q"T,Q-Ov4[C',
+    :authentication       => 'plain',
+    :enable_starttls_auto => true  }
 end

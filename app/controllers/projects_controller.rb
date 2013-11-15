@@ -25,6 +25,11 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def sent_mail
+    ShareEmail.share_project(params[:recipient], params[:project_id]).deliver
+    redirect_to project_path(params[:project_id])
+  end
+
   def project_show
     @projects = []
     projects = Project.where(country: params[:country]) 
@@ -100,8 +105,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @project = Project.new
     @project.parent_id = params[:parent_id] if params[:parent_id]
   end

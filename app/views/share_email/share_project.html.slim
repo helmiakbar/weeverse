@@ -1,0 +1,15 @@
+p
+  | Hi
+
+p
+	| I found Project #{@project.title} creator by #{@project.creator} in #{@project.city}
+
+p
+	= @project.description
+
+p
+	/ img src="#{@project.image.url}" style=" height: 150px; width: 350px;"
+	= image_tag(@project.image, style: 'height: 150px; width: 350px;')
+
+p
+	| For more information please check here #{project_url(@project.id)}

@@ -26,7 +26,6 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
           = link_to "Join Project", join_path(@project.id), class: "button small primary"
         - else
           = link_to "Joined", project_path, class: "button small primary"
-        / a.button.small.primary href="#" Join Project
       #social-media
         = link_to "https://www.facebook.com/dialog/feed?app_id= #{Settings.facebook.app_id}&link= #{project_url(@project.id)}&name=#{url_encode(@project.title)}&description=#{url_encode("Like making a difference in the community? Check out this great project I found on @weeverse.  You can help fund it, or set up a project of your own to Get RUUTed! ")}&redirect_uri=#{root_url}", :target => :blank do
           = image_tag('/assets/webicon-facebook-m.png')
@@ -34,9 +33,19 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
         a href="#" class= "tw-count"
           img src="/assets/webicon-twitter-m.png"
         | &nbsp;
-        / a data-pin-config="above" data-pin-do="buttonPin" href="http://www.pinterest.com/pin/create/button/\r\n?url=(http%3A%2F%2F#{project_url(@project.id)}&media=#{@project.image.path}\r\n)&description=#{@project.description}"
         = link_to "http://www.pinterest.com/pin/create/button/\r\n?url=#{project_url(@project.id)}&media=#{url_encode(@project.image.url)}\r\n&description=#{@project.description}" do 
           = image_tag('/assets/webicon-pinterest-m.png')
+        a data-reveal-id="myModal" href="#" 
+          img src="/assets/webicon-mail-m.png"
+        #myModal.reveal-modal
+          h1 Send Email
+          = form_tag sent_mail_path do
+            p
+              | Recipient
+              = text_field_tag 'recipient'
+              = hidden_field_tag 'project_id', @project.id
+              = submit_tag "send"
+          a.close-reveal-modal ×
         / | &nbsp;
         / a href="#"
         /   img src="/assets/webicon-mail-m.png"
@@ -186,3 +195,10 @@ javascript:
     p.src = '//assets.pinterest.com/js/pinit.js';
     f.parentNode.insertBefore(p, f);
   }(document));
+
+  $(document).ready(function() {
+    $("#buttonForModal").click(function() {
+      $("#myModal").reveal();
+    });
+  });
+  $('#myModal').trigger('reveal:close');

@@ -67,53 +67,27 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
           a href="#" | Places
     #container-content-right.large-10.columns
       .row
-        | Projects
         #container-projects
-          - @projects.each do |project|
+          - @all.flatten.each do |all|
             .project
               .title
                 img src="/assets/tree.jpg"
-                = link_to "#{project.title}", project
+                - if all.class.name.eql? "Project"
+                  = link_to "#{all.title}", project_path(all.id)
+                - else
+                  = link_to "#{all.title}", idea_path(all.id)
+                / = all.title
                 img src="/assets/star-white.jpg" style="float:right;"
               .image
-                - if project.image.present?
-                  = image_tag(project.image, style: 'width: 100%; height: 158px;')
+                - if all.image.present?
+                  = image_tag(all.image, style: 'width: 100%; height: 158px;')
                 - else
                   img src="/assets/worldwide.jpg" style="width: 100%;"
               .project-info
-                | Project By #{project.creator} in #{project.country}
+                | Project By #{all.creator} in #{all.country}
               .project-desc
                 span
-                  = project.description
-              .project-bottom
-                .rating
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-white.jpg"
-                  img src="/assets/love-white.jpg"
-                .detail
-                  img src="/assets/love-white.jpg"
-    #container-content-right.large-10.columns
-      .row
-        | Ideas
-        #container-projects
-          - @ideas.each do |idea|
-            .project
-              .title
-                img src="/assets/tree.jpg"
-                = link_to "#{idea.title}", idea
-                img src="/assets/star-white.jpg" style="float:right;"
-              .image
-                - if idea.image.present?
-                  = image_tag(idea.image, style: 'width: 100%; height: 158px;')
-                - else
-                  img src="/assets/worldwide.jpg" style="width: 100%;"
-              .project-info
-                | Project By #{idea.creator} in #{idea.country}
-              .project-desc
-                span
-                  = idea.description
+                  = all.description
               .project-bottom
                 .rating
                   img src="/assets/love-red.jpg"
@@ -131,8 +105,8 @@ javascript:
     $("#btn-show").hide();
     $("#map").hide();
     $("#container-project.row").hide();
-    var dataLocation2 = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-    var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+    var dataLocation2 = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+    var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
     for (i = 0; i < dataLocation2.length; i++) {
       var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])]).addTo(map2);
     }
@@ -148,40 +122,47 @@ javascript:
     $("#map").show();
     $("#container-project.row").show();
   });
-  var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
+  var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
   for (i = 0; i < dataLocation.length; i++) {
     var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);
+
   var project_show = function(type) {
     $.get('/projects/project_show.js?type=' + type + '&country=' + $("#country").attr("country-name"));
     map.remove(); 
   };
+  
   var project_region = function(type) {
     $.get('/projects/project_region.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name"));
     map.remove(); 
   };
+  
   var project_city = function(type) {
     $.get('/projects/project_city.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name") + '&city=' + $('#city_name').attr("city-name") );
     map.remove(); 
   };
+  
   $("#add-region").bind("click", function(){
     $("#region-field").show();
     $("#group1").hide();
   });
+  
   $("#add-city").bind("click", function(){
     $("#city-field").show();
     $("#group2").hide();
   });
+  
   $("#btn-filter1").bind("click", function(){
     $("#country").text($("#project_country").val());
     $("#country").attr('country-name',$("#project_country").val());
     $("#region_name").hide();
     $("#city_name").hide();
   });
+  
   $("#btn-filter2").bind("click", function(){
     $("#country").text($("#project_country").val());
     $("#country").attr('country-name',$("#project_country").val());
@@ -189,6 +170,7 @@ javascript:
     $("#region_name").attr('region-name',$("#project_region_name").val());
     $("#city_name").hide();
   });
+  
   $("#btn-filter3").bind("click", function(){
     $("#country").text($("#project_country").val());
     $("#country").attr('country-name',$("#project_country").val());

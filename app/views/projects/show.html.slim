@@ -44,6 +44,8 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
             p
               | Recipient
               = text_field_tag 'recipient'
+              | Content
+              = text_area_tag 'project_content', "Check Out this project #{@project.title} on cocomaps"
               = hidden_field_tag 'project_id', @project.id
               = submit_tag "send"
           a.close-reveal-modal ×

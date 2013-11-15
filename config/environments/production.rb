@@ -66,7 +66,7 @@ Weeverse::Application.configure do
     jquery.rating.css projects.css.scss scaffolds.css.scss style.css )
 
   # ActionMailer Config
-  config.action_mailer.default_url_options = { :host => 'http://weeverse-dev.herokuapp.com/' }
+  config.action_mailer.default_url_options = { :host => 'http://weeverse-dev.herokuapp.com' }
   config.action_mailer.delivery_method = :smtp
 
   # Ignore bad email addresses and do not raise email delivery errors.

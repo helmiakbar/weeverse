@@ -33,6 +33,7 @@
 			<div id="right-header" class="large-1 small-offset-3 columns">
 				<a href="#" data-dropdown="drop1"><%= current_user. name %></a>
 				<ul id="drop1" class="f-dropdown" data-dropdown-content>
+					<li><%= link_to "Profile", user_content_path %></li>
 				  <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
 				</ul>
 			</div>

@@ -1,4 +1,7 @@
 Weeverse::Application.routes.draw do
+  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
+  
+
   resources :ideas do
     collection do 
       get "idea_show"
@@ -21,6 +24,7 @@ Weeverse::Application.routes.draw do
   get "all" => "projects#all"
   get "big/:id" => "projects#big", as: :big
   post "sent_mail" => "projects#sent_mail", as: :sent_mail
+  get "user_content" => "projects#user_content"
 
   devise_for :users, controllers: {registrations: "users/registrations", sessions: "users/sessions"}
   # The priority is based upon order of creation: first created -> highest priority.

@@ -56,4 +56,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem "fog"
 gem "geoip"
 gem 'rails_config'
+gem 'geocoder'
+gem 'rails_admin'
+gem 'acts-as-taggable-on'
 # gem 'acts_as_votable', '~> 0.7.1' 

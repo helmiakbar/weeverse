@@ -137,13 +137,18 @@ javascript:
       else {
         address = data;
       }
-       lat = data.results[0].locations[0].latLng.lat
-       lng = data.results[0].locations[0].latLng.lng
-       $("#project_lat").val(data.results[0].locations[0].latLng.lat)
-       $("#project_long").val(data.results[0].locations[0].latLng.lng)
+        lat = data.results[0].locations[0].latLng.lat
+        lng = data.results[0].locations[0].latLng.lng
+        $("#project_lat").val(data.results[0].locations[0].latLng.lat)
+        $("#project_long").val(data.results[0].locations[0].latLng.lng)
+
+        var redIcon = L.icon({
+          iconUrl: '/assets/poi_red.png',
+          shadowUrl: '/assets/poi_shadow.png'
+        });
 
         map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
-        var marker = L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
+        var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
 
       });
 

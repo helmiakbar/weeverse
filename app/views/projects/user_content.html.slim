@@ -1,0 +1,62 @@
+#container-bar.row
+  / .large-4.columns.top-bar-content
+  /   = link_to 'Show All', all_path, id: "btn-add", class: "button", style: "margin-top: 6px"
+  / .large-8.columns.top-bar-content
+  /   - if user_signed_in?
+  /     = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
+  #container-content.row
+    #container-content-left.large-2.columns
+      .row
+        #box-question.large-12.columns
+        .large-12.columns.left-menu
+          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
+        .large-12.columns.left-menu
+          a href="#" | Media
+        .large-12.columns.left-menu
+          a href="#" | Places
+    #container-content-right.large-10.columns
+      .row
+        #container-project-detail.large-11.columns
+          #image-back
+            = link_to projects_path do 
+              img src="/assets/arrow-left.png" width="30"
+          - @projects.each do |project|
+            #project-thumbnail
+              = image_tag(project.image, style: 'height: 158px; width: 100%;')
+            #project-detail
+              div
+                #image-tree
+                  img src="/assets/tree.jpg" width="30"
+                #project-title
+                  = link_to "#{project.title}", project
+                #image-star
+                  img src="/assets/star-white.jpg" width="30"
+              #project-information
+                | Project By #{project.creator} in #{project.country} on #{project.created_at}
+              #project-description
+                p
+                  = project.description
+                p
+                  = link_to "edit", edit_project_path(project.id)
+            #box-facebook-comment
+      .row
+        #container-project-detail.large-11.columns
+          - @project_user.each do |project_user|
+            #project-thumbnail
+              = image_tag(project_user.image, style: 'height: 158px; width: 100%;')
+            #project-detail
+              div
+                #image-tree
+                  img src="/assets/tree.jpg" width="30"
+                #project-title
+                  = link_to "#{project_user.title}", project_path(project_user.id)
+                #image-star
+                  img src="/assets/star-white.jpg" width="30"
+              #project-information
+                | Project By #{project_user.creator} in #{project_user.country} on #{project_user.created_at}
+              #project-description
+                p
+                  = project_user.description
+            #box-facebook-comment

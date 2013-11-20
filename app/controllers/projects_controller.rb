@@ -8,18 +8,13 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     if user_signed_in?
-      @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:project_id]
-        @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km)
       else
-        @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name)
+        @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km)
       end
-      projects1 = Project.all   
-      @countries = projects1.map(&:country).uniq
-      @regions = projects1.map(&:region_name).uniq
-      @cities = projects1.map(&:city).uniq
     else
       @projects = Project.where(parent_id: nil)
     end
@@ -76,6 +71,11 @@ class ProjectsController < ApplicationController
     @cities = projects.map(&:city).uniq
   end
 
+  def user_content
+    @projects = Project.where(creator: current_user.name)
+    @project_user = current_user.projects
+  end
+
   def big
     @project = Project.where(id: params[:id])
   end
@@ -113,6 +113,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/edit
   def edit
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
   end
 
   # POST /projects

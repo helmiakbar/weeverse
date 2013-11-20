@@ -87,7 +87,7 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
     #container-content-right.large-10.columns
       .row
         #container-projects
-          - @projects.each do |project|
+          - @projects.flatten.each do |project|
             .project
               .title
                 img src="/assets/tree.jpg"
@@ -123,7 +123,7 @@ javascript:
     $("#btn-show").hide();
     $("#map").hide();
     $("#container-project.row").hide();
-    var dataLocation2 = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+    var dataLocation2 = #{raw @projects.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
     var map2 = L.map('map2').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 13);
     var redIcon = L.icon({
       iconUrl: '/assets/poi_red.png'

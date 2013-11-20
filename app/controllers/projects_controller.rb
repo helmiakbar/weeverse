@@ -63,11 +63,12 @@ class ProjectsController < ApplicationController
       if params[:project_id]
         @project_id = params[:project_id]
         @project = Project.find(params[:project_id])
+        ideas = Idea.where(project_id: params[:project_id])
         projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
       else
         projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name)
+        ideas = Idea.all
       end
-      ideas = Idea.all
       @all << ideas << projects
       @all.flatten
     else
@@ -101,9 +102,12 @@ class ProjectsController < ApplicationController
     if user_signed_in?
       if params[:id]
         @projects = Project.where(parent_id: params[:id])
+        @ideas = Idea.where(project_id: params[:id])
+        @projects << @ideas
+        @projects.flatten
       else
-        @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-        # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+        # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+        @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
         @projects = Project.where(city: @location.city_name, parent_id: params[:id])
       end
     else

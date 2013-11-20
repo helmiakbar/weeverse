@@ -57,6 +57,7 @@ class IdeasController < ApplicationController
     @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
     # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @idea = Idea.new
+    @idea.project_id = params[:parent_id] if params[:parent_id]
   end
 
   # GET /ideas/1/edit
@@ -118,6 +119,6 @@ class IdeasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name)
+      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id)
     end
 end

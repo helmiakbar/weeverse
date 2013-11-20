@@ -30,8 +30,11 @@
 javascript:
   var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description, "#{test.image}", test.title] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
+  var redIcon = L.icon({
+    iconUrl: '/assets/poi_red.png'
+  });
   for (i = 0; i < dataLocation.length; i++) {
-    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])], {icon: redIcon}).addTo(map);
     marker.bindPopup("Description: " + dataLocation[i][2] + "<img src=" + dataLocation[i][3] + " style='height: 158px;'>" + "<br/>" + " Title: " + dataLocation[i][4]);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {

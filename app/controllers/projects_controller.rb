@@ -11,9 +11,17 @@ class ProjectsController < ApplicationController
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:project_id]
-        @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km)
+        if params[:tag]
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km)
+        else
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km).tagged_with(params[:tag])
+        end
       else
-        @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km)
+        if params[:tag]
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km).tagged_with(params[:tag])
+        else
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km)
+        end
       end
     else
       @projects = Project.where(parent_id: nil)
@@ -172,6 +180,6 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id)
+      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id, :tag_list)
     end
   end

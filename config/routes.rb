@@ -1,6 +1,6 @@
 Weeverse::Application.routes.draw do
   mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
-  
+  get 'tags/:tag', to: 'projects#index', as: :tag
 
   resources :ideas do
     collection do 

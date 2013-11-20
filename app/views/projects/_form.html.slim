@@ -69,6 +69,8 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
           #container-information.large-8.columns
             = f.text_field :title, placeholder: "Title"
             = f.text_area :description, placeholder: "Description"
+            = f.label :tag_list, "Tags ( separated by commas )"
+            = f.text_field :tag_list
             = f.hidden_field :creator, value: current_user.name
             = f.hidden_field :lat
             = f.hidden_field :long

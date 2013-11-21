@@ -37,7 +37,11 @@ class ProjectsController < ApplicationController
 
   def project_show
     @projects = []
-    projects = Project.where(country: params[:country]) 
+    location = params[:country].split(',')
+    city = location[1].split(" ")
+    nearby = location[0].split('km')
+    projects = Project.where{(city =~ '%#{city[0]}%')}
+    projects = Project.near([projects.first.lat, projects.first.long], nearby[0].to_f, :units => :km)
     @projects = projects.uniq
     respond_to :js
   end
@@ -108,8 +112,8 @@ class ProjectsController < ApplicationController
         @projects << @ideas
         @projects.flatten
       else
-        # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-        @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+        @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+        # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
         @projects = Project.where(city: @location.city_name, parent_id: params[:id])
       end
     else

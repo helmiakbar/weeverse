@@ -49,9 +49,6 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
               = hidden_field_tag 'project_id', @project.id
               = submit_tag "send"
           a.close-reveal-modal ×
-        / | &nbsp;
-        / a href="#"
-        /   img src="/assets/webicon-mail-m.png"
       #rating
         img src="/assets/love-red.jpg"
         img src="/assets/love-red.jpg"
@@ -69,7 +66,32 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
     = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
   .large-8.columns.top-bar-content
     - if user_signed_in?
-      = link_to 'Add to The Project', new_project_path(parent_id: @project.id), class: "button", style: "margin-top: 6px; margin-left: 80%"
+      table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 70%;"
+        tr
+          td
+            a.button data-reveal-id="myModal2" href="#" 
+              | Share Project
+            #myModal2.reveal-modal style="top: -450px; margin-left: -690px"
+              = form_tag share_project_path do
+                table style="background:none; border:none;"
+                  tr
+                    td
+                      h3 Share your Project to #{@project.title}
+                    td
+                      = submit_tag "Share", style: "margin-left: 410px", class: "button"
+                table
+                  tr
+                    td
+                      | My projects
+                    td
+                      table
+                        - @projects.flatten.each do |project|
+                          tr
+                            td
+                              input name="project[]" type="checkbox" value="#{project.title}" #{project.title}
+              a.close-reveal-modal ×
+          td
+            = link_to 'Add to The Project', new_project_path(parent_id: @project.id), class: "button"
   #container-content.row
     #container-content-left.large-2.columns
       .row
@@ -196,17 +218,15 @@ javascript:
 
   !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
 
-  // (function(d){
-  //   var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT');
-  //   p.type = 'text/javascript';
-  //   p.async = true;
-  //   p.src = '//assets.pinterest.com/js/pinit.js';
-  //   f.parentNode.insertBefore(p, f);
-  // }(document));
-
   $(document).ready(function() {
     $("#buttonForModal").click(function() {
       $("#myModal").reveal();
     });
   });
-  $('#myModal').trigger('reveal:close');
+  $('#myModal2').trigger('reveal:close');
+  $(document).ready(function() {
+    $("#buttonForModal").click(function() {
+      $("#myModal2").reveal();
+    });
+  });
+  $('#myModal2').trigger('reveal:close');

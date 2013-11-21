@@ -20,6 +20,7 @@ Weeverse::Application.routes.draw do
     end
   end
   
+  post "share_project" => "projects#share_project"
   get "join/:id" => "projects#join", as: :join
   get "all" => "projects#all"
   get "big/:id" => "projects#big", as: :big

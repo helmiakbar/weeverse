@@ -30,6 +30,10 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def share_project
+    render :nothing => true
+  end
+
   def sent_mail
     ShareEmail.share_project(params[:recipient], params[:project_id], params[:project_content]).deliver
     redirect_to project_path(params[:project_id])
@@ -46,25 +50,11 @@ class ProjectsController < ApplicationController
     respond_to :js
   end
 
-  def project_region
-    @projects = []
-    projects = Project.where('country = ? AND region_name = ?', params[:country], params[:region])
-    @projects = projects.uniq
-    respond_to :js
-  end
-
-  def project_city
-    @projects = []
-    projects = Project.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region], params[:city])
-    @projects = projects.uniq
-    respond_to :js
-  end
-
   def all
     @countries = @regions = @cities = @all = []
     if user_signed_in?
-      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @project1 = Project.where(id: params[:id])
       if params[:project_id]
         @project_id = params[:project_id]

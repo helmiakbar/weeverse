@@ -5,17 +5,16 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 #container-bar.row
   .large-7.columns.top-bar-content
-    - if user_signed_in?
-      table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
-        tr
-          td 
-            a.button#change href="#" Change Location
-          td#location1 style="display: none;"
-            | Showing Result within x km of location
-          td#location2 style="display: none;"
-            input#project_region_name.span2 name="project[address]" placeholder= "5km, Bandung" 
-          td#location3 style="display: none;"
-            a.button#change_location href="javascript:void(0);" onClick="project_show('country')" Set Location
+    table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
+      tr
+        td 
+          a.button#change href="#" Change Location
+        td#location1 style="display: none;"
+          | Showing Result within x km of location
+        td#location2 style="display: none;"
+          input#project_region_name.span2 name="project[address]" placeholder= "5km, Bandung" 
+        td#location3 style="display: none;"
+          a.button#change_location href="javascript:void(0);" onClick="project_show('country')" Set Location
   .large-5.columns.top-bar-content
     - if user_signed_in?            
       = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"

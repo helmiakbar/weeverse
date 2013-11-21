@@ -7,24 +7,26 @@ class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.json
   def index
+    result = request.location
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:project_id]
         if params[:tag]
-          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km)
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([result.latitude, result.longitude], 5, :units => :km)
         else
-          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([@location.latitude, @location.longitude], 5, :units => :km).tagged_with(params[:tag])
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([result.latitude, result.longitude], 5, :units => :km).tagged_with(params[:tag])
         end
       else
         if params[:tag]
-          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km).tagged_with(params[:tag])
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([result.latitude, result.longitude], 5, :units => :km).tagged_with(params[:tag])
         else
-          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@location.latitude, @location.longitude], 5, :units => :km)
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([result.latitude, result.longitude], 5, :units => :km)
         end
       end
     else
-      @projects = Project.where(parent_id: nil)
+      # @projects = Project.where(parent_id: nil)
+      @projects = Project.all.near([result.latitude, result.longitude], 5, :units => :km)
     end
   end
 

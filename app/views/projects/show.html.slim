@@ -77,6 +77,7 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
                   tr
                     td
                       h3 Share your Project to #{@project.title}
+                      input name="parent_id" type="hidden" value="#{@project.id}"
                     td
                       = submit_tag "Share", style: "margin-left: 410px", class: "button"
                 table
@@ -85,7 +86,7 @@ script src="//assets.pinterest.com/js/pinit.js" type="text/javascript"
                       | My projects
                     td
                       table
-                        - @projects.flatten.each do |project|
+                        - @projects2.each do |project|
                           tr
                             td
                               input name="project[]" type="checkbox" value="#{project.title}" #{project.title}

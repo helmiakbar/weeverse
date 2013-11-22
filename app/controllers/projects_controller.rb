@@ -12,10 +12,11 @@ class ProjectsController < ApplicationController
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:project_id]
+        asd
         if params[:tag]
-          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([result.latitude, result.longitude], 5, :units => :km)
-        else
           @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([result.latitude, result.longitude], 5, :units => :km).tagged_with(params[:tag])
+        else
+          @projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id]).near([result.latitude, result.longitude], 5, :units => :km)
         end
       else
         if params[:tag]
@@ -31,7 +32,13 @@ class ProjectsController < ApplicationController
   end
 
   def share_project
-    render :nothing => true
+    params[:project].each do |share|
+      project = Project.where(title: share)
+      project = project.first
+      project.parent_id = params[:parent_id]
+      project.save
+    end
+    redirect_to projects_path
   end
 
   def sent_mail
@@ -53,8 +60,8 @@ class ProjectsController < ApplicationController
   def all
     @countries = @regions = @cities = @all = []
     if user_signed_in?
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @project1 = Project.where(id: params[:id])
       if params[:project_id]
         @project_id = params[:project_id]
@@ -101,6 +108,7 @@ class ProjectsController < ApplicationController
         @ideas = Idea.where(project_id: params[:id])
         @projects << @ideas
         @projects.flatten
+        @projects2 = Project.where(parent_id: nil)
       else
         @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
         # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')

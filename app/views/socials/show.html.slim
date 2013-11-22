@@ -1,0 +1,63 @@
+link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
+script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
+
+#map style="height: 35% !important; width: 25% !important; position:absolute !important; right: 20px"
+
+#container-project.row
+  .large-3.columns
+    = image_tag(@social.image, :action => 'join', style: 'height: 150px; width: 350px;')
+  .large-5.columns
+    #box-title
+      #title
+        span = @social.title
+      #star
+        img src="/assets/star-white.jpg" width="28"
+    #box-project-information
+      img src="/assets/tree.jpg" width="18"
+      | Idea By #{@social.creator} in #{@social.city}
+    #box-project-description
+      p
+        = @social.description
+    #box-project-other-information
+      #box-join-project
+        a.button.small.primary href="#" Join Project
+      #social-media
+        a href="#"
+          img src="/assets/tree.jpg"
+        | &nbsp;&nbsp;
+        a href="#"
+          img src="/assets/tree.jpg"
+      #rating
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-red.jpg"
+        img src="/assets/love-white.jpg"
+        img src="/assets/love-white.jpg"
+    div style="clear:both; text-align:center;"
+      #disqus_thread
+  .large-4.columns
+    div style="text-align:center; margin-top:5px; font-size:0.9em;"
+      | North Vancouver BC
+      a href="#" style="display:block;"
+
+javascript:
+  var dataLocation = #{raw @social1.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 13);
+  for (i = 0; i < dataLocation.length; i++) {
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
+  }
+  L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+  }).addTo(map);
+
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'helmitest'; // required: replace example with your forum shortname
+  var disqus_developer = #{ Rails.env == "production" ? '0' : '1' };
+  var disqus_url = "#{ request.url }";
+  var disqus_identifier = "#{ request.fullpath }";
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();

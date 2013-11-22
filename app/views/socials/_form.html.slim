@@ -5,12 +5,12 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
 
 #map
 
-= form_for @idea do |f|
-  - if @idea.errors.any?
+= form_for @social do |f|
+  - if @social.errors.any?
     #error_explanation
-      h2 = "#{pluralize(@idea.errors.count, "error")} prohibited this idea from being saved:"
+      h2 = "#{pluralize(@social.errors.count, "error")} prohibited this social from being saved:"
       ul
-        - @idea.errors.full_messages.each do |message|
+        - @social.errors.full_messages.each do |message|
           li = message
 
   #container-bar.row
@@ -41,14 +41,24 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
         .row
           #box-question.large-12.columns
             span What kind of content are you adding?
-          .large-12.columns.left-menu
-            = link_to 'Projects', new_project_path
-          .large-12.columns.left-menu
-            = link_to 'Ideas', new_idea_path
-          .large-12.columns.left-menu
-            a href="#" Media
-          .large-12.columns.left-menu
-            a href="#" Places
+          - if @social.project_id.present?
+            .large-12.columns.left-menu
+              = link_to 'Projects', new_project_path(parent_id: params[:parent_id])
+            .large-12.columns.left-menu
+              = link_to 'Ideas', new_idea_path(parent_id: params[:parent_id])
+            .large-12.columns.left-menu
+              a href="#" Media
+            .large-12.columns.left-menu
+              a href="#" Places
+          - else
+            .large-12.columns.left-menu
+                = link_to 'Projects', new_project_path
+            .large-12.columns.left-menu
+              = link_to 'Ideas', new_idea_path
+            .large-12.columns.left-menu
+              a href="#" Media
+            .large-12.columns.left-menu
+              a href="#" Places
       #container-content-right.large-10.columns
         .row
           #container-upload.large-4.columns
@@ -59,12 +69,9 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
           #container-information.large-8.columns
             = f.text_field :title, placeholder: "Title"
             = f.text_area :description, placeholder: "Description"
-            = f.label :tag_list, "Tags ( separated by commas )"
-            = f.text_field :tag_list
             = f.hidden_field :creator, value: current_user.name
             = f.hidden_field :lat
             = f.hidden_field :long
-            = f.hidden_field :region_name
             = f.hidden_field :project_id
         .row
           #container-add.large-4.large-offset-2
@@ -102,7 +109,6 @@ javascript:
     attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
     subdomains: ['1','2','3','4']
   });
-  
   // Init application
   $(document).ready(function() {
     // Assign points to users
@@ -123,15 +129,25 @@ javascript:
        var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#project_city").val() +"},options:{thumbMaps:false}}"
 
       $.get( url, function( data ) {
-       console.log(data)
-       data = JSON.parse(data)
-       lat = data.results[0].locations[0].latLng.lat
-       lng = data.results[0].locations[0].latLng.lng
-       $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
-       $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+      var address = "";
+      if(typeof(data) == "string") {
+        address = JSON.parse(data);
+      }
+      else {
+        address = data;
+      }
+        lat = data.results[0].locations[0].latLng.lat
+        lng = data.results[0].locations[0].latLng.lng
+        $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+        $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+        var redIcon = L.icon({
+          iconUrl: '/assets/poi_red.png',
+          shadowUrl: '/assets/poi_shadow.png'
+        });
 
         map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
-        var marker = L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
+        var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
 
       });
 
@@ -213,8 +229,7 @@ javascript:
   // INSERT point
 
   function insertPoint(position,options) {
-    console.log(position);
-    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+    var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
 
     $.get( url, function( data ) {
       console.log(data);
@@ -225,11 +240,11 @@ javascript:
       else {
         address = data;
       }
-      $("#idea_country").val(data.results[0].locations[0].adminArea4)
-      $("#idea_city").val(data.results[0].locations[0].adminArea5)
-      $("#idea_postal_code").val(data.results[0].locations[0].postalCode)
-      $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
-      $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+      $("#social_country").val(address.results[0].locations[0].adminArea4)
+      $("#social_city").val(address.results[0].locations[0].adminArea5)
+      $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+      $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+      $("#social_long").val(address.results[0].locations[0].latLng.lng)
     
     });
     var point = L.marker(position,options).addTo(map);
@@ -257,11 +272,11 @@ javascript:
       else {
         address = data;
       }
-      $("#idea_country").val(data.results[0].locations[0].adminArea4)
-      $("#idea_city").val(data.results[0].locations[0].adminArea5)
-      $("#idea_postal_code").val(data.results[0].locations[0].postalCode)
-      $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
-      $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+      $("#social_country").val(address.results[0].locations[0].adminArea4)
+      $("#social_city").val(address.results[0].locations[0].adminArea5)
+      $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+      $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+      $("#social_long").val(address.results[0].locations[0].latLng.lng)
     
     });
     var point = L.marker(position,options).addTo(map);

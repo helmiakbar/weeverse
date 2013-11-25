@@ -1,0 +1,9 @@
+count = $(".url").size();
+$("#box-upload").append("<input type='hidden' name='url["+ count +"]' class='url' value='<%= @url %>'>")
+	
+<% if @video.present? %>
+	$("#thumbnail-container").append("<a class='th' href='#' style='width: 20%'><img src='<%= @video.thumbnail_medium %>' style='height:25%;'></a>")
+<% elsif @soundcloud.present? %>
+	$("#thumbnail-container").append("<a class='th' href='#' style='width: 20%'><img src='<%= @soundcloud.parsed_response['artwork_url'] %>' style='height:25%;'></a>")
+<% else %>
+<% end %>

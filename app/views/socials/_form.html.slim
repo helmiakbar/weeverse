@@ -52,7 +52,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
               a href="#" Places
           - else
             .large-12.columns.left-menu
-                = link_to 'Projects', new_project_path
+              = link_to 'Projects', new_project_path
             .large-12.columns.left-menu
               = link_to 'Ideas', new_idea_path
             .large-12.columns.left-menu
@@ -66,6 +66,10 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
               / a#btn-upload.button.success href="#"
               = f.label :image, "Upload Image"
               = f.file_field :image
+              input#social_url.span2 name="social[url]" placeholder= "Enter media url here.." style="width: 80%"
+              a.tiny.success.button#change_location style="margin-left: 10px" href="javascript:void(0);" onClick="social_media()" Add +
+              #thumbnail-container
+
           #container-information.large-8.columns
             = f.text_field :title, placeholder: "Title"
             = f.text_area :description, placeholder: "Description"
@@ -81,6 +85,15 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     /   = f.file_field :image
 
 javascript:
+  var social_media = function(){
+    var url = $("#social_url").val();
+    if (url == ""){
+      alert("please input url")
+    } else {
+      $.get('/socials/get_thumbnail.js?url=' + url);
+    }
+  };
+
   var gs = {
     wfs: 'http://lab.georepublic.info/geoserver/grp/wfs',
     ows: 'http://lab.georepublic.info/geoserver/grp/ows'

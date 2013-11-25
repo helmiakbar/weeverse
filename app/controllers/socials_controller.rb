@@ -1,3 +1,4 @@
+# require 'youtube_it'
 class SocialsController < ApplicationController
   before_action :set_social, only: [:show, :edit, :update, :destroy]
 
@@ -46,6 +47,19 @@ class SocialsController < ApplicationController
   def edit
   end
 
+  def get_thumbnail
+    @url = params[:url]
+    if params[:url].match(Regexp.union(/youtube.com/, /vimeo.com/))
+      @video = VideoInfo.new(params[:url])
+    else
+      if params[:url].match(/soundcloud.com/)
+        @soundcloud = HTTParty.get("http://api.soundcloud.com/resolve.json?url=#{params[:url]}&client_id=8f624be8e4a0dbb19d303b829a85501b")
+      else
+
+      end
+    end
+  end
+
   # POST /socials
   # POST /socials.json
   def create
@@ -59,6 +73,9 @@ class SocialsController < ApplicationController
 
     respond_to do |format|
       if @social.save
+        params[:url].each do |key, value|
+          @social.media_urls.create(url: value)
+        end
         format.html { redirect_to @social, notice: 'Social was successfully created.' }
         format.json { render action: 'show', status: :created, location: @social }
       else
@@ -100,6 +117,10 @@ class SocialsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def social_params
-      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :parent_id)
+      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :project_id)
+    end
+
+    def media_url_params
+      params.require(:media_url).permit(:url, :social_id)
     end
 end

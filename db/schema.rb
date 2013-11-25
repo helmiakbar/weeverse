@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131122090132) do
+ActiveRecord::Schema.define(version: 20131125034243) do
 
   create_table "ideas", force: true do |t|
     t.string   "title"
@@ -27,6 +27,13 @@ ActiveRecord::Schema.define(version: 20131122090132) do
     t.string   "creator"
     t.string   "region_name"
     t.integer  "project_id"
+  end
+
+  create_table "media_urls", force: true do |t|
+    t.string   "url"
+    t.integer  "social_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "projects", force: true do |t|

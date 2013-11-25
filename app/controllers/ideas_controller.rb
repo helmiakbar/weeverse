@@ -8,7 +8,11 @@ class IdeasController < ApplicationController
       @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
-      @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+      if params[:tag]
+        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name).tagged_with(params[:tag])
+      else
+        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+      end
       ideas1 = Idea.all   
       @countries = ideas1.map(&:country).uniq
       @regions = ideas1.map(&:region_name).uniq
@@ -119,6 +123,6 @@ class IdeasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id)
+      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id, :tag_list)
     end
 end

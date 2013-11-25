@@ -41,7 +41,7 @@ end
 # gem 'capistrano', group: :development
 
 # Use debugger
-# gem 'debugger', group: [:development, :test]
+gem 'debugger', group: [:development, :test]
 gem 'compass-rails'
 gem 'zurb-foundation', '~> 4.0.0'
 gem "devise", github: "plataformatec/devise"
@@ -60,4 +60,5 @@ gem 'geocoder'
 gem 'rails_admin'
 gem 'acts-as-taggable-on'
 gem 'squeel'
-# gem 'acts_as_votable', '~> 0.7.1' 
+gem 'video_info'
+gem 'httparty' 

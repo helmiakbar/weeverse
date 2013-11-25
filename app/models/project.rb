@@ -5,8 +5,8 @@ class Project < ActiveRecord::Base
   has_many :childrens, :class_name=>Project,:foreign_key=>"parent_id"
   has_many :taggings
   has_many :tags, through: :taggings
-  has_many :idea
-  has_many :media
+  has_many :ideas
+  has_many :socials
 
 	mount_uploader :image, ImageUploader
 

@@ -1,7 +1,5 @@
 link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
-script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
-script src="http://code.jquery.com/jquery-1.8.3.min.js"
-script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
+= javascript_include_tag "http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js", "http://code.jquery.com/jquery-1.8.3.min.js", "http://code.jquery.com/ui/1.9.2/jquery-ui.js", "jquery.ui.widget.js", "jquery.iframe-transport.js", "jquery.fileupload.js"
 
 #map
 
@@ -63,9 +61,15 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
         .row
           #container-upload.large-4.columns
             #box-upload
-              / a#btn-upload.button.success href="#"
-              = f.label :image, "Upload Image"
-              = f.file_field :image
+              a.th href="#" style="width: 35%;"
+                img#photo-box src="#" style="height: 25%; width 100%; display: none;"
+                #checkbox style="display: none;"
+                  input type="checkbox" set as default image
+                input#photo-selected name="selected" type="hidden" val=""
+                input#photo-id-selected name="selected-id" type="hidden" val=""
+              input#fileupload data-url="/socials/upload_photo/" multiple="" name="files[]" type="file"
+              #photo-thumbnail
+
               input#social_url.span2 name="social[url]" placeholder= "Enter media url here.." style="width: 80%"
               a.tiny.success.button#change_location style="margin-left: 10px" href="javascript:void(0);" onClick="social_media()" Add +
               #thumbnail-container
@@ -91,8 +95,15 @@ javascript:
       alert("please input url")
     } else {
       $.get('/socials/get_thumbnail.js?url=' + url);
+      $("#social_url").val("")
     }
   };
+
+  $(function () {
+    $('#fileupload').fileupload({
+        
+    });
+  });
 
   var gs = {
     wfs: 'http://lab.georepublic.info/geoserver/grp/wfs',

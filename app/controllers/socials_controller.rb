@@ -22,6 +22,11 @@ class SocialsController < ApplicationController
     end
   end
 
+  def contact_author
+    ShareEmail.share_project(params[:recipient], params[:social_id], params[:social_content]).deliver
+    redirect_to social_path(params[:social_id])
+  end
+
   # GET /socials/1
   # GET /socials/1.json
   def show
@@ -29,9 +34,10 @@ class SocialsController < ApplicationController
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
-      @ideas = Social.where(city: @location.city_name)
+      @socials = Social.where(city: @location.city_name)
+      @contact_author = User.where(name: @social.creator)
     else
-      @ideas = Social.all
+      @socials = Social.all
     end
   end
 
@@ -60,6 +66,9 @@ class SocialsController < ApplicationController
     end
   end
 
+  def upload_photo
+    @photo = Photo.create(image: params[:files].last)
+  end
   # POST /socials
   # POST /socials.json
   def create
@@ -70,11 +79,22 @@ class SocialsController < ApplicationController
     social_params[:country].blank? ? social_params[:country] << location.country_name : social_params[:country]
     social_params[:city].blank? ? social_params[:city] << location.city_name : social_params[:city]
     @social = Social.new(social_params)
-
+    if params[:selected].present?
+      photos = Photo.find(params[:photos_id])
+      photos.default = true
+      photos.save
+    end
+    
     respond_to do |format|
+      asdasd
       if @social.save
         params[:url].each do |key, value|
           @social.media_urls.create(url: value)
+        end
+        params[:photos].each do |key, value|
+          photo = Photo.find(value)
+          photo.social_id = @social.id
+          photo.save
         end
         format.html { redirect_to @social, notice: 'Social was successfully created.' }
         format.json { render action: 'show', status: :created, location: @social }
@@ -122,5 +142,9 @@ class SocialsController < ApplicationController
 
     def media_url_params
       params.require(:media_url).permit(:url, :social_id)
+    end
+
+    def photos_params
+      params.require(:photo).permit(:photo, :social_id)
     end
 end

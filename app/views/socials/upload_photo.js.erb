@@ -1,0 +1,15 @@
+count = $(".photo_ids").size();
+$("#box-upload").append("<input type='hidden' name='photos["+ count +"]' class='photo_ids' value='<%= @photo.id %>'>")
+
+$('<img src="<%= @photo.image.thumb.url %>" id="'+ count +'" class="show-photo"/>').appendTo($("#photo-thumbnail"));
+$("#photo-thumbnail").append("<input type='hidden' name='photos_url' id='url-"+ count +"' value='<%= @photo.image.url %>'>");
+$("#photo-thumbnail").append("<input type='hidden' name='photos_id' id='id-"+ count +"' value='<%= @photo.id %>'>");
+
+$(".show-photo").bind('click', function(){
+	var image_id = $(this).attr("id");
+	$("#photo-box").show();
+	$("#checkbox").show();
+  $("#photo-box").attr("src", $("#url-" + image_id).val());
+  $("#photo-selected").val($("#url-" + image_id).val());
+  $("#photo-id-selected").val($("#id-" + image_id).val());
+});

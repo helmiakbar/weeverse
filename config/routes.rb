@@ -6,6 +6,7 @@ Weeverse::Application.routes.draw do
   resources :socials do 
     collection do 
       get "get_thumbnail"
+      post "upload_photo"
     end
   end
 
@@ -33,6 +34,7 @@ Weeverse::Application.routes.draw do
   get "big/:id" => "projects#big", as: :big
   post "sent_mail" => "projects#sent_mail", as: :sent_mail
   get "user_content" => "projects#user_content"
+  post "contact_author" => "socials#contact_author", as: :contact_author
 
   devise_for :users, controllers: {registrations: "users/registrations", sessions: "users/sessions"}
   # The priority is based upon order of creation: first created -> highest priority.

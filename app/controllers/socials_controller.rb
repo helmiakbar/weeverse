@@ -11,6 +11,7 @@ class SocialsController < ApplicationController
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:tag]
         @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name).tagged_with(params[:tag])
+        @photo = @socials.map{ |s| s.photos.where(default: true) }
       else
         @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name)
       end
@@ -36,6 +37,7 @@ class SocialsController < ApplicationController
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @socials = Social.where(city: @location.city_name)
       @contact_author = User.where(name: @social.creator)
+      @photo = @social.photos.where(default: true)
     else
       @socials = Social.all
     end
@@ -84,7 +86,7 @@ class SocialsController < ApplicationController
       photos.default = true
       photos.save
     end
-    
+
     respond_to do |format|
       asdasd
       if @social.save

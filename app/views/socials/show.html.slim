@@ -5,7 +5,10 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 #container-project.row
   .large-3.columns
-  /   = image_tag(@social.image, :action => 'join', style: 'height: 150px; width: 350px;')
+    - if @photo.first.blank?
+      img src="/assets/worldwide.jpg" style="width: 100%;"
+    - else
+      = image_tag(@photo.first.image, style: 'width: 100%; height: 158px;')
   .large-5.columns
     #box-title
       #title

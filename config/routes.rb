@@ -1,4 +1,6 @@
 Weeverse::Application.routes.draw do
+  resources :events
+
   mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
   get 'tags/:tag', to: 'projects#index', as: :tag
   get 'tags1/:tag', to: 'ideas#index', as: :tag1

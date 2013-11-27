@@ -6,4 +6,5 @@ $("#box-upload").append("<input type='hidden' name='url["+ count +"]' class='url
 <% elsif @soundcloud.present? %>
 	$("#thumbnail-container").append("<a class='th' href='#' style='width: 20%'><img src='<%= @soundcloud.parsed_response['artwork_url'] %>' style='height:25%;'></a>")
 <% else %>
+	$("#thumbnail-container").append("<a class='th' href='#' style='width: 20%'><img src='<%= @photo.image.thumb.url %>' style='height:25%;'></a>")
 <% end %>

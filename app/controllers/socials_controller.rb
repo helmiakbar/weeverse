@@ -59,12 +59,13 @@ class SocialsController < ApplicationController
     @url = params[:url]
     if params[:url].match(Regexp.union(/youtube.com/, /vimeo.com/))
       @video = VideoInfo.new(params[:url])
+    elsif params[:url].match(/soundcloud.com/)
+      @soundcloud = HTTParty.get("http://api.soundcloud.com/resolve.json?url=#{params[:url]}&client_id=8f624be8e4a0dbb19d303b829a85501b")
     else
-      if params[:url].match(/soundcloud.com/)
-        @soundcloud = HTTParty.get("http://api.soundcloud.com/resolve.json?url=#{params[:url]}&client_id=8f624be8e4a0dbb19d303b829a85501b")
-      else
-
-      end
+      @photo = Photo.new
+      @photo.remote_image_url = params["url"]
+      @photo.save
+      # @photo = Photo.create(image: params[:url].remote_avatar_url)
     end
   end
 
@@ -139,7 +140,7 @@ class SocialsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def social_params
-      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :project_id)
+      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :project_id, :event_id)
     end
 
     def media_url_params
@@ -147,6 +148,6 @@ class SocialsController < ApplicationController
     end
 
     def photos_params
-      params.require(:photo).permit(:photo, :social_id)
+      params.require(:photo).permit(:photo, :social_id, :remote_image_url)
     end
 end

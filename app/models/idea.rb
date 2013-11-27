@@ -1,5 +1,6 @@
 class Idea < ActiveRecord::Base
   belongs_to :project
+  belongs_to :event
   has_many :taggings
   has_many :tags, through: :taggings
 	mount_uploader :image, ImageUploader

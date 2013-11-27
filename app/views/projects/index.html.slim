@@ -9,8 +9,10 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
       tr
         td 
           a.button#change href="#" Change Location
+        td#location0
+          | Showing Resul within 5km of #{@result.city}
         td#location1 style="display: none;"
-          | Showing Result within x km of location
+          | Showing Result within 5km of #{@result.city}
         td#location2 style="display: none;"
           input#project_region_name.span2 name="project[address]" placeholder= "5km, Bandung" 
         td#location3 style="display: none;"
@@ -48,6 +50,7 @@ javascript:
   
   $("#change").bind("click", function(){
     $("#change").hide();
+    $("#location0").hide();
     $("#location1").show();
     $("#location2").show();
     $("#location3").show();

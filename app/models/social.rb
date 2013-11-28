@@ -1,4 +1,5 @@
 class Social < ActiveRecord::Base
+	reverse_geocoded_by :lat, :long
 	belongs_to :project
   has_many :media_urls
   has_many :photos

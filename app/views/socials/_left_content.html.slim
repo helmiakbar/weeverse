@@ -1,0 +1,20 @@
+#box-question.large-12.columns
+  span What kind of content are you adding?
+- if @social.project_id.present?
+  .large-12.columns.left-menu
+    = link_to 'Projects', new_project_path(parent_id: params[:parent_id])
+  .large-12.columns.left-menu
+    = link_to 'Ideas', new_idea_path(parent_id: params[:parent_id])
+  .large-12.columns.left-menu
+    a href="#" Media
+  .large-12.columns.left-menu
+    a href="#" Places
+- else
+  .large-12.columns.left-menu
+    = link_to 'Projects', new_project_path
+  .large-12.columns.left-menu
+    = link_to 'Ideas', new_idea_path
+  .large-12.columns.left-menu
+    = link_to 'Media', new_social_path, style: 'margin-left: 8px'
+  .large-12.columns.left-menu
+    a href="#" Places

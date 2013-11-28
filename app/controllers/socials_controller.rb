@@ -5,21 +5,19 @@ class SocialsController < ApplicationController
   # GET /socials
   # GET /socials.json
   def index
+    @result = request.location
     if user_signed_in?
-      @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:tag]
-        @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name).tagged_with(params[:tag])
+        @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km).tagged_with(params[:tag])
         @photo = @socials.map{ |s| s.photos.where(default: true) }
       else
-        @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+        @socials = Social.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
+        @photo = @socials.map{ |s| s.photos.where(default: true) }
       end
-      socials1 = Social.all   
-      @countries = socials1.map(&:country).uniq
-      @cities = socials1.map(&:city).uniq
     else
-      @socials = Social.all
+      @socials = Social.all.near([@result.latitude, @result.longitude], 5, :units => :km)
     end
   end
 
@@ -28,16 +26,43 @@ class SocialsController < ApplicationController
     redirect_to social_path(params[:social_id])
   end
 
+  def social_show
+    @socials = []
+    location = params[:country].split(',')
+    city = location[1].split(" ")
+    @city = city
+    @nearby = location[0].split('km')
+    socials = Social.where{(city =~ '%#{city[0]}%')}
+    socials = Social.near([socials.first.lat, socials.first.long], @nearby[0].to_f, :units => :km)
+    @socials = socials.uniq
+    respond_to :js
+  end
+
   # GET /socials/1
   # GET /socials/1.json
   def show
     @social1 = Social.where(id: params[:id])
     if user_signed_in?
+      @urls = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @socials = Social.where(city: @location.city_name)
       @contact_author = User.where(name: @social.creator)
       @photo = @social.photos.where(default: true)
+      videos = @social.media_urls.map(&:url)
+      images = @social.photos.map(&:image_url)
+      media_urls = images + videos
+      media_urls.each do |url|
+        if url.match(Regexp.union(/youtube.com/, /vimeo.com/))
+          video = VideoInfo.new(url)
+          @urls << video.thumbnail_small
+        elsif url.match(/soundcloud.com/)
+          soundcloud = HTTParty.get("http://api.soundcloud.com/resolve.json?url=#{url}&client_id=8f624be8e4a0dbb19d303b829a85501b")
+          @urls << soundcloud.parsed_response['artwork_url']
+        else
+          @urls << url
+        end
+      end
     else
       @socials = Social.all
     end
@@ -65,7 +90,6 @@ class SocialsController < ApplicationController
       @photo = Photo.new
       @photo.remote_image_url = params["url"]
       @photo.save
-      # @photo = Photo.create(image: params[:url].remote_avatar_url)
     end
   end
 

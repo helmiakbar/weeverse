@@ -28,11 +28,14 @@
         img src="/assets/love-white.jpg"
 
 javascript:
-  var dataLocation = #{raw @ideas.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description] }};
+ var dataLocation = #{raw @ideas.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description, "#{test.image}", test.title] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
+  var redIcon = L.icon({
+    iconUrl: '/assets/eye.png'
+  });
   for (i = 0; i < dataLocation.length; i++) {
-    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])]).addTo(map);
-    marker.bindPopup(dataLocation[i][2]).openPopup();
+    var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])], {icon: redIcon}).addTo(map);
+    marker.bindPopup("Description: " + dataLocation[i][2] + "<img src=" + dataLocation[i][3] + " style='height: 158px;'>" + "<br/>" + " Title: " + dataLocation[i][4]);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'

@@ -25,17 +25,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
-        .large-12.columns.left-menu
-          = link_to 'All Content', all_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Media', socials_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          a href="#" | Places
-
+        == render "page_content/left_menu"
     #container-content-right.large-10.columns
       .row
         #container-projects

@@ -1,4 +1,5 @@
 class Idea < ActiveRecord::Base
+  reverse_geocoded_by :lat, :long
   belongs_to :project
   belongs_to :event
   has_many :taggings

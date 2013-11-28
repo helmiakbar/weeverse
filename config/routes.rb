@@ -9,6 +9,7 @@ Weeverse::Application.routes.draw do
     collection do 
       get "get_thumbnail"
       post "upload_photo"
+      get "social_show"
     end
   end
 

@@ -4,57 +4,27 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 #map style="height: 180px"
 
 #container-bar.row
-  .large-4.columns.top-bar-content
-    - if user_signed_in?
-      ul.button-group style="margin-top: 12px;"
-        li
-          a.small.button href="#" All > 
-        li
-          a.small.button#country country-name="#{@location.country_name}" href="javascript:void(0);" onClick="idea_show('country');" #{@location.country_name} >
-        li
-          a.small.button#region_name region-name="#{@location.region_name}" href="javascript:void(0);" onClick="idea_region('region');" #{@location.region_name} >
-        li
-          a.small.button#city_name city-name="#{@location.city_name}" href="javascript:void(0);" onClick="idea_city('city');" #{@location.city_name}
-        li
-          a.button.dropdown#city data-dropdown="drop2" href="#" style="height: 27px; padding-right: 33px; padding-left: 9px"
-          br
-            ul#drop2.f-dropdown
-              li
-                input#idea_country.span2 name="idea[country]" placeholder= "Country"
-                ul.button-group#group1
-                  li
-                    a.small.button#btn-filter1 href="javascript:void(0);" style="width: 53px;" Filter
-                  li
-                    a.small.button#add-region href="javascript:void(0);" style="width: 90px;" Add Region 
-              li#region-field style="display: none;"
-                input#idea_region_name.span2 name="project[region_name]" placeholder= "Region Name" 
-                ul.button-group#group2
-                  li
-                    a.small.button#btn-filter2 href="javascript:void(0);" style="width: 53px;" Filter
-                  li
-                    a.small.button#add-city href="javascript:void(0);" style="width: 90px;" Add City
-              li#city-field style="display: none;"
-                input#idea_city.span2 name="project[city]" placeholder= "City"
-                ul.button-group#group3
-                  li
-                    a.small.button#btn-filter3 href="javascript:void(0);" style="width: 53px;" Filter
-  .large-8.columns.top-bar-content
+  .large-7.columns.top-bar-content
+    table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
+      tr
+        td 
+          a.button#change href="#" Change Location
+        td#location0
+          | Showing Resul within 5km of #{@result.city}
+        td#location1 style="display: none;"
+          | Showing Result within 5km of #{@result.city}
+        td#location2 style="display: none;"
+          input#idea_region_name.span2 name="idea[address]" placeholder= "5km, Bandung" 
+        td#location3 style="display: none;"
+          a.button#change_location href="javascript:void(0);" onClick="idea_show('country')" Set Location
+  .large-5.columns.top-bar-content
     - if user_signed_in?
       = link_to 'New Idea', new_idea_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
   #container-content.row
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
-        .large-12.columns.left-menu
-          = link_to 'All Content', all_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Media', socials_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          a href="#" | Places
+        == render "page_content/left_menu"
     #container-content-right.large-10.columns
       .row
         #container-projects
@@ -62,52 +32,14 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 javascript:
   var idea_show = function(type) {
-    $.get('/ideas/idea_show.js?type=' + type + '&country=' + $("#country").attr("country-name"));
+    $.get('/ideas/idea_show.js?type=' + type + '&country=' + $("#idea_region_name").val());
     map.remove(); 
   };
   
-  var idea_region = function(type) {
-    $.get('/ideas/idea_region.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name"));
-    map.remove(); 
-  };
-  
-  var idea_city = function(type) {
-    $.get('/ideas/idea_city.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name") + '&city=' + $('#city_name').attr("city-name") );
-    map.remove(); 
-  };
-  
-  $("#add-region").bind("click", function(){
-    $("#region-field").show();
-    $("#group1").hide();
-  });
-  
-  $("#add-city").bind("click", function(){
-    $("#city-field").show();
-    $("#group2").hide();
-  });
-  
-  $("#btn-filter1").bind("click", function(){
-    $("#country").text($("#idea_country").val());
-    $("#country").attr('country-name',$("#idea_country").val());
-    $("#region_name").hide();
-    $("#city_name").hide();
-  });
-  
-  $("#btn-filter2").bind("click", function(){
-    $("#city_name").show();
-    $("#country").text($("#idea_country").val());
-    $("#country").attr('country-name',$("#idea_country").val());
-    $("#region_name").text($("#idea_region_name").val());
-    $("#region_name").attr('region-name',$("#idea_region_name").val());
-    $("#city_name").hide();
-  });
-  
-  $("#btn-filter3").bind("click", function(){
-    $("#city_name").show();
-    $("#country").text($("#idea_country").val());
-    $("#country").attr('country-name',$("#idea_country").val());
-    $("#region_name").text($("#idea_region_name").val());
-    $("#region_name").attr('region-name',$("#idea_region_name").val());
-    $("#city_name").text($("#idea_city").val());
-    $("#city_name").attr('city-name',$("#idea_city").val());
+  $("#change").bind("click", function(){
+    $("#change").hide();
+    $("#location0").hide();
+    $("#location1").show();
+    $("#location2").show();
+    $("#location3").show();
   });

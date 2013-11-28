@@ -1,44 +1,33 @@
+require 'geoip'
+
 class IdeasController < ApplicationController
   before_action :set_idea, only: [:show, :edit, :update, :destroy]
 
   # GET /ideas
   # GET /ideas.json
   def index
+    @result = request.location
     if user_signed_in?
-      @countries = @regions = @cities = []
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
       # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:tag]
-        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name).tagged_with(params[:tag])
+        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km).tagged_with(params[:tag])
       else
-        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name)
+        @ideas = Idea.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
       end
-      ideas1 = Idea.all   
-      @countries = ideas1.map(&:country).uniq
-      @regions = ideas1.map(&:region_name).uniq
-      @cities = ideas1.map(&:city).uniq
     else
-      @ideas = Idea.all
+      @ideas = Idea.all.near([@result.latitude, @result.longitude], 5, :units => :km)
     end
   end
 
   def idea_show
     @ideas = []
-    ideas = Idea.where(country: params[:country]) 
-    @ideas = ideas.uniq
-    respond_to :js
-  end
-
-  def idea_region
-    @ideas = []
-    ideas = Idea.where('country = ? AND region_name = ?', params[:country], params[:region])
-    @ideas = ideas.uniq
-    respond_to :js
-  end
-
-  def idea_city
-    @ideas = []
-    ideas = Idea.where('country = ? AND region_name = ? AND city = ?', params[:country], params[:region], params[:city])
+    location = params[:country].split(',')
+    city = location[1].split(" ")
+    @city = city
+    @nearby = location[0].split('km')
+    ideas = Idea.where{(city =~ '%#{city[0]}%')}
+    ideas = Idea.near([ideas.first.lat, ideas.first.long], @nearby[0].to_f, :units => :km)
     @ideas = ideas.uniq
     respond_to :js
   end
@@ -123,6 +112,6 @@ class IdeasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id, :tag_list)
+      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id, :tag_list, :event_id)
     end
 end

@@ -4,29 +4,42 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 #map style="height: 180px"
 
 #container-bar.row
-  .large-4.columns.top-bar-content
-    
-  .large-8.columns.top-bar-content
+  .large-7.columns.top-bar-content
+    table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
+      tr
+        td 
+          a.button#change href="#" Change Location
+        td#location0
+          | Showing Resul within 5km of #{@result.city}
+        td#location1 style="display: none;"
+          | Showing Result within 5km of #{@result.city}
+        td#location2 style="display: none;"
+          input#social_region_name.span2 name="social[address]" placeholder= "5km, Bandung" 
+        td#location3 style="display: none;"
+          a.button#change_location href="javascript:void(0);" onClick="social_show('country')" Set Location  
+  .large-5.columns.top-bar-content
     - if user_signed_in?
       = link_to 'New Media', new_social_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
   #container-content.row
     #container-content-left.large-2.columns
       .row
         #box-question.large-12.columns
-        .large-12.columns.left-menu
-          = link_to 'All Content', all_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Projects', projects_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          = link_to 'Media', new_social_path, style: 'margin-left: 8px'
-        .large-12.columns.left-menu
-          a href="#" | Places
+        == render "page_content/left_menu"
     #container-content-right.large-10.columns
       .row
         #container-projects
           == render 'social_city_list'
 
 javascript:
+  var social_show = function(type) {
+    $.get('/socials/social_show.js?type=' + type + '&country=' + $("#social_region_name").val());
+    map.remove(); 
+  };
   
+  $("#change").bind("click", function(){
+    $("#change").hide();
+    $("#location0").hide();
+    $("#location1").show();
+    $("#location2").show();
+    $("#location3").show();
+  });

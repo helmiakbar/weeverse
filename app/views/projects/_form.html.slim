@@ -17,7 +17,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/tree_green.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
       table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
@@ -39,26 +39,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     #container-content.row
       #container-content-left.large-2.columns
         .row
-          #box-question.large-12.columns
-            span What kind of content are you adding?
-          - if @project.parent_id.present?
-            .large-12.columns.left-menu
-              = link_to 'Projects', new_project_path(parent_id: params[:parent_id])
-            .large-12.columns.left-menu
-              = link_to 'Ideas', new_idea_path(parent_id: params[:parent_id])
-            .large-12.columns.left-menu
-              a href="#" Media
-            .large-12.columns.left-menu
-              a href="#" Places
-          - else
-            .large-12.columns.left-menu
-                = link_to 'Projects', new_project_path
-            .large-12.columns.left-menu
-              = link_to 'Ideas', new_idea_path
-            .large-12.columns.left-menu
-              = link_to 'Media', new_social_path
-            .large-12.columns.left-menu
-              a href="#" Places
+          == render 'left_content'
       #container-content-right.large-10.columns
         .row
           #container-upload.large-4.columns
@@ -97,14 +78,14 @@ javascript:
     options: {
       iconSize: [22,32],
       iconAnchor: [-20,0],
-      shadowUrl: '/assets/poi_shadow.png',
+      shadowUrl: '/assets/tree_shadow.png',
       shadowSize: [22,13],
       shadowAnchor: [-31,-19],
       popupAnchor: [32,-2]
     }
   });
 
-  var redIcon   = new poiIcon({iconUrl:'/assets/poi_red.png'});;
+  var redIcon   = new poiIcon({iconUrl:'/assets/tree_green.png'});;
   
   // Mapquest layer
   var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
@@ -132,28 +113,27 @@ javascript:
        var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#project_city").val() +"},options:{thumbMaps:false}}"
 
       $.get( url, function( data ) {
-      var address = "";
-      if(typeof(data) == "string") {
-        address = JSON.parse(data);
-      }
-      else {
-        address = data;
-      }
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
         lat = data.results[0].locations[0].latLng.lat
         lng = data.results[0].locations[0].latLng.lng
         $("#project_lat").val(data.results[0].locations[0].latLng.lat)
         $("#project_long").val(data.results[0].locations[0].latLng.lng)
 
         var redIcon = L.icon({
-          iconUrl: '/assets/poi_red.png',
-          shadowUrl: '/assets/poi_shadow.png'
+          iconUrl: '/assets/tree_green.png',
+          shadowUrl: '/assets/tree_shadow.png'
         });
 
         map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
         var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
 
       });
-
     })
 
     

@@ -17,7 +17,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/eye.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
       table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
@@ -39,16 +39,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     #container-content.row
       #container-content-left.large-2.columns
         .row
-          #box-question.large-12.columns
-            span What kind of content are you adding?
-          .large-12.columns.left-menu
-            = link_to 'Projects', new_project_path
-          .large-12.columns.left-menu
-            = link_to 'Ideas', new_idea_path
-          .large-12.columns.left-menu
-            = link_to 'Media', new_social_path
-          .large-12.columns.left-menu
-            a href="#" Places
+          == render "left_menu"
       #container-content-right.large-10.columns
         .row
           #container-upload.large-4.columns
@@ -85,7 +76,7 @@ javascript:
   
   var poiIcon = L.Icon.extend({
     options: {
-      iconSize: [22,32],
+      iconSize: [31,17],
       iconAnchor: [-20,0],
       shadowUrl: '/assets/poi_shadow.png',
       shadowSize: [22,13],
@@ -94,7 +85,7 @@ javascript:
     }
   });
 
-  var redIcon   = new poiIcon({iconUrl:'/assets/poi_red.png'});;
+  var redIcon   = new poiIcon({iconUrl:'/assets/eye.png'});;
   
   // Mapquest layer
   var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
@@ -120,21 +111,30 @@ javascript:
     });
 
     $("#add-address").click(function(){
-       var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#project_city").val() +"},options:{thumbMaps:false}}"
+       var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#idea_city").val() +"},options:{thumbMaps:false}}"
 
       $.get( url, function( data ) {
-       console.log(data)
-       data = JSON.parse(data)
-       lat = data.results[0].locations[0].latLng.lat
-       lng = data.results[0].locations[0].latLng.lng
-       $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
-       $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        lat = data.results[0].locations[0].latLng.lat
+        lng = data.results[0].locations[0].latLng.lng
+        $("#idea_lat").val(data.results[0].locations[0].latLng.lat)
+        $("#idea_long").val(data.results[0].locations[0].latLng.lng)
+
+        var redIcon = L.icon({
+          iconUrl: '/assets/eye.png',
+          shadowUrl: '/assets/poi_shadow.png'
+        });
 
         map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
-        var marker = L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
+        var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
 
       });
-
     })
 
     

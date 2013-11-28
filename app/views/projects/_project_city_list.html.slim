@@ -34,7 +34,7 @@ javascript:
   var dataLocation = #{raw @projects.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.description, "#{test.image}", test.title] }};
   var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 10);
   var redIcon = L.icon({
-    iconUrl: '/assets/poi_red.png'
+    iconUrl: '/assets/tree_green.png'
   });
   for (i = 0; i < dataLocation.length; i++) {
     var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])], {icon: redIcon}).addTo(map);

@@ -15,7 +15,7 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/film.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
       table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
@@ -97,7 +97,7 @@ javascript:
   
   var poiIcon = L.Icon.extend({
     options: {
-      iconSize: [22,32],
+      iconSize: [22,26],
       iconAnchor: [-20,0],
       shadowUrl: '/assets/poi_shadow.png',
       shadowSize: [22,13],
@@ -106,7 +106,7 @@ javascript:
     }
   });
 
-  var redIcon   = new poiIcon({iconUrl:'/assets/poi_red.png'});;
+  var redIcon   = new poiIcon({iconUrl:'/assets/film.png'});;
   
   // Mapquest layer
   var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
@@ -147,7 +147,7 @@ javascript:
         $("#social_long").val(data.results[0].locations[0].latLng.lng)
 
         var redIcon = L.icon({
-          iconUrl: '/assets/poi_red.png',
+          iconUrl: '/assets/film.png',
           shadowUrl: '/assets/poi_shadow.png'
         });
 

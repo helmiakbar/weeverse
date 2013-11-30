@@ -58,11 +58,17 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         .large-12.columns.left-menu
           = link_to 'All Content', all_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
-          = link_to 'Projects', !@project_id.nil? ? project_path(id: @project_id) : projects_path , style: 'margin-left: 8px'
+          = link_to (!@project_id.nil? ? project_path(id: @project_id) : projects_path), style: 'margin-left : 8px' do
+            = "Projects"
+            = image_tag "tree.jpg", style: "margin-left: 49%;"
         .large-12.columns.left-menu
-          = link_to 'Ideas', ideas_path, style: 'margin-left: 8px'
+          = link_to ideas_path, style: 'margin-left : 8px' do
+            = "Ideas"
+            = image_tag "eye.png", style: "margin-left: 55%;"
         .large-12.columns.left-menu
-          = link_to 'Media', socials_path, style: 'margin-left: 8px'
+          = link_to socials_path, style: 'margin-left: 8px' do
+            = "Media"
+            = image_tag "film.png", style: "margin-left: 55%;"
         .large-12.columns.left-menu
           a href="#" | Places
     #container-content-right.large-10.columns

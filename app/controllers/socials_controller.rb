@@ -113,7 +113,6 @@ class SocialsController < ApplicationController
     end
 
     respond_to do |format|
-      asdasd
       if @social.save
         params[:url].each do |key, value|
           @social.media_urls.create(url: value)

@@ -28,7 +28,14 @@
 
 javascript:
   var dataLocation2 = #{raw @socials.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 13);
+  var map = ""
+  
+  if(dataLocation.length == 0)
+  {
+    map = L.map('map').setView([51.3512542357518,-0.461769104003906], 2);
+  }else{
+    map = L.map('map').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 2);
+  }
   var redIcon = L.icon({
     iconUrl: '/assets/film.png'
   });

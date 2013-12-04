@@ -46,17 +46,38 @@ class ProjectsController < ApplicationController
 
   def project_show
     @projects = []
-    location = params[:country].split(',')
-    city = location[1].split(" ")
-    @city = city
-    @nearby = location[0].split('km')
-    projects = Project.where{(city =~ '%#{city[0]}%')}
-    projects = Project.near([projects.first.lat, projects.first.long], @nearby[0].to_f, :units => :km)
+    @city = params[:country]
+    @nearby = params[:distance]
+    projects = Project.where('city ILIKE ?', "%#{params[:country]}%")
+    projects = Project.near([projects.first.lat, projects.first.long], @nearby.to_f, :units => :km)
     @projects = projects.uniq
     respond_to :js
   end
 
+  def all_show
+    @all = []
+    @city = params[:country]
+    @nearby = params[:distance]
+    projects = Project.where('city ILIKE ?', "%#{params[:country]}%")
+    if projects.present?
+      projects = Project.near([projects.first.lat, projects.first.long], @nearby.to_f, :units => :km)
+    end
+    ideas = Idea.where('city ILIKE ?', "%#{params[:country]}%")
+    if ideas.present?
+      ideas = Idea.near([ideas.first.lat, ideas.first.long], @nearby.to_f, :units => :km)
+    end
+    socials = Social.where('city ILIKE ?', "%#{params[:country]}%")
+    if socials.present?
+      socials = Social.near([socials.first.lat, socials.first.long], @nearby.to_f, :units => :km)
+    end
+
+    @all << projects << ideas << socials
+    @all.flatten
+    respond_to :js
+  end
+
   def all
+    @result = request.location
     @countries = @regions = @cities = @all = []
     if user_signed_in?
       @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
@@ -68,10 +89,11 @@ class ProjectsController < ApplicationController
         ideas = Idea.where(project_id: params[:project_id])
         projects = Project.where('(city = ? OR country = ?) AND parent_id = ?', @location.city_name, @location.country_name, params[:project_id])
       else
-        projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name)
-        ideas = Idea.all
+        projects = Project.where('(city = ? OR country = ?) AND parent_id IS NULL', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
+        ideas = Idea.where('(city = ? OR country = ?)' , @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
+        socials = Social.where('(city = ? OR country = ?)' , @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
       end
-      @all << ideas << projects
+      @all << ideas << projects << socials
       @all.flatten
     else
       projects = Project.where(parent_id: nil)
@@ -109,8 +131,8 @@ class ProjectsController < ApplicationController
         @projects.flatten
         @projects2 = Project.where(parent_id: nil)
       else
-        @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-        # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+        # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+        @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
         @projects = Project.where(city: @location.city_name, parent_id: params[:id])
       end
     else
@@ -128,8 +150,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/edit
   def edit
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
   end
 
   # POST /projects
@@ -187,6 +209,6 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id, :tag_list)
+      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id, :tag_list, :street)
     end
   end

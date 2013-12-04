@@ -20,22 +20,26 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
         img.drag.show alt="POI: red" src="/assets/poi_red.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
-      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
+      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: -15px;"
         tr
-          td 
+          td
             = f.label :country
           td
             = f.text_field :country
-          td 
+          td
             = f.label :city
           td
             = f.text_field :city
-          td 
+          td
             = f.label :postal_code
           td
             = f.text_field :postal_code
           td
-            div id ="add-address" "add address.."
+            = f.label :street
+          td
+            = f.text_field :street
+          td
+            div id ="add-address" "Set Location"
     #container-content.row
       #container-content-left.large-2.columns
         .row

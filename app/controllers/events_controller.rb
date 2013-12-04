@@ -4,7 +4,18 @@ class EventsController < ApplicationController
   # GET /events
   # GET /events.json
   def index
-    @events = Event.all
+    @result = request.location
+    if user_signed_in?
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+      if params[:tag]
+        @events = Event.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km).tagged_with(params[:tag])
+      else
+        @events = Event.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km)
+      end
+    else
+      @events = Event.all.near([@result.latitude, @result.longitude], 5, :units => :km)
+    end
   end
 
   # GET /events/1
@@ -85,6 +96,6 @@ class EventsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def event_params
-      params.require(:event).permit(:title, :description, :image, :country, :city, :postal_code, :creator, :lat, :long, :date)
+      params.require(:event).permit(:title, :description, :image, :country, :city, :postal_code, :creator, :lat, :long, :date, :street)
     end
 end

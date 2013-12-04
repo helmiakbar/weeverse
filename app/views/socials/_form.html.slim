@@ -15,10 +15,14 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag.show alt="POI: red" src="/assets/film.png" type="red"
+        img.drag1.show alt="POI: red" src="/assets/media-music-marker.png" type="red" style="display: none;"
+        img.drag2.show alt="POI: red" src="/assets/media-film-marker.png" type="red" style="display: none;"
+        img.drag3.show alt="POI: red" src="/assets/media-image-marker.png" type="red" style="display: none;"
+        img.drag4.show alt="POI: red" src="/assets/media-texts-marker.png" type="red" style="display: none;"
+        img.drag5.show alt="POI: red" src="/assets/media-webpage-marker.png" type="red" style="display: none;"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
-      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
+      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: -15px;"
         tr
           td 
             = f.label :country
@@ -32,28 +36,55 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
             = f.label :postal_code
           td
             = f.text_field :postal_code
+          td 
+            = f.label :street
           td
-            div id ="add-address" "add address.."
+            = f.text_field :street
+          td
+            div id ="add-address" "set location"
     #container-content.row
       #container-content-left.large-2.columns
         .row
           == render 'left_content'
       #container-content-right.large-10.columns
         .row
+          table style="background:none; border:none;"
+            tr
+              td
+                | Create Media :
+              td#label-check
+                |
+              td
+                input#music type="radio" name="category" value="Music"
+                = image_tag "music.png"
+              td
+                input#video type="radio" name="category" value="Video"
+                = image_tag "camera2.png"
+              td
+                input#picture type="radio" name="category" value="Picture"
+                = image_tag "camera.png"
+              td
+                input#file type="radio" name="category" value="File"
+                = image_tag "file3.png"
+              td
+                input#web type="radio" name="category" value="Web"
+                = image_tag "newspaper.png"
           #container-upload.large-4.columns
             #box-upload
-              a.th href="#" style="width: 35%;"
-                img#photo-box src="#" style="height: 25%; width 100%; display: none;"
-                #checkbox style="display: none;"
-                  input type="checkbox" set as default image
-                input#photo-selected name="selected" type="hidden" val=""
-                input#photo-id-selected name="selected-id" type="hidden" val=""
-              input#fileupload data-url="/socials/upload_photo/" multiple="" name="files[]" type="file"
-              #photo-thumbnail
+              #photo style="display: none;"
+                a.th href="#" style="width: 35%;"
+                  img#photo-box src="#" style="height: 25%; width 100%; display: none;"
+                  #checkbox style="display: none;"
+                    input type="checkbox" set as default image
+                  input#photo-selected name="selected" type="hidden" val=""
+                  input#photo-id-selected name="selected-id" type="hidden" val=""
+                input#fileupload data-url="/socials/upload_photo/" multiple="" name="files[]" type="file"
+                #photo-thumbnail
 
-              input#social_url.span2 name="social[url]" placeholder= "Enter media url here.." style="width: 80%"
-              a.tiny.success.button#change_location style="margin-left: 10px" href="javascript:void(0);" onClick="social_media()" Add +
-              #thumbnail-container
+              #video-box style="display: none;"
+                input#social_url.span2 name="social[url]" placeholder= "Enter media url here.." style="width: 80%"
+                a.tiny.success.button#change_location style="margin-left: 10px" href="javascript:void(0);" onClick="social_media()" Add +
+                #thumbnail-container
 
           #container-information.large-8.columns
             = f.text_field :title, placeholder: "Title"
@@ -70,22 +101,6 @@ link href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" rel="stylesheet"
     /   = f.file_field :image
 
 javascript:
-  var social_media = function(){
-    var url = $("#social_url").val();
-    if (url == ""){
-      alert("please input url")
-    } else {
-      $.get('/socials/get_thumbnail.js?url=' + url);
-      $("#social_url").val("")
-    }
-  };
-
-  $(function () {
-    $('#fileupload').fileupload({
-        
-    });
-  });
-
   var gs = {
     wfs: 'http://lab.georepublic.info/geoserver/grp/wfs',
     ows: 'http://lab.georepublic.info/geoserver/grp/ows'
@@ -99,200 +114,1017 @@ javascript:
     options: {
       iconSize: [22,26],
       iconAnchor: [-20,0],
-      shadowUrl: '/assets/poi_shadow.png',
       shadowSize: [22,13],
       shadowAnchor: [-31,-19],
       popupAnchor: [32,-2]
     }
   });
 
-  var redIcon   = new poiIcon({iconUrl:'/assets/film.png'});;
+  var social_media = function(){
+    var url = $("#social_url").val();
+    if (url == ""){
+      alert("please input url")
+    } else {
+      $.get('/socials/get_thumbnail.js?url=' + url);
+      $("#social_url").val("")
+    }
+  };
+
+  $("#music" ).on( "click", function() {
+    $("#label-check" ).html( $( "input:checked" ).val());
+    $(".drag1").show();
+    $(".drag2").hide();
+    $(".drag3").hide();
+    $(".drag4").hide();
+    $(".drag5").hide();
+    $("#video-box").show();
+    $("#photo").hide();
+
+    var redIcon   = new poiIcon({iconUrl:'/assets/media-music-marker.png'});;
   
-  // Mapquest layer
-  var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
-    maxZoom: 18, 
-    attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
-    subdomains: ['1','2','3','4']
-  });
-  // Init application
-  $(document).ready(function() {
-    // Assign points to users
-    $.get('http://api.hostip.info/get_json.php',function(json){
-      user = json;
-      // Load user points
-      loadPoints();
+    // Mapquest layer
+    var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+      maxZoom: 18, 
+      attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
+      subdomains: ['1','2','3','4']
     });
-
-    map = new L.Map('map', {
-      center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
-      zoom: 16,
-      layers: [mapquest],
-      zoomControl: true
-    });
-
-    $("#add-address").click(function(){
-       var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
-
-      $.get( url, function( data ) {
-      var address = "";
-      if(typeof(data) == "string") {
-        address = JSON.parse(data);
-      }
-      else {
-        address = data;
-      }
-        lat = data.results[0].locations[0].latLng.lat
-        lng = data.results[0].locations[0].latLng.lng
-        $("#social_lat").val(data.results[0].locations[0].latLng.lat)
-        $("#social_long").val(data.results[0].locations[0].latLng.lng)
-
-        var redIcon = L.icon({
-          iconUrl: '/assets/film.png',
-          shadowUrl: '/assets/poi_shadow.png'
-        });
-
-        map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
-        var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
-
+    // Init application
+    $(document).ready(function() {
+      // Assign points to users
+      $.get('http://api.hostip.info/get_json.php',function(json){
+        user = json;
+        // Load user points
+        loadPoints();
       });
 
-    })
+      map = new L.Map('map', {
+        center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
+        zoom: 16,
+        layers: [mapquest],
+        zoomControl: true
+      });
 
+      $("#add-address").click(function(){
+         var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
+
+        $.get( url, function( data ) {
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+          lat = data.results[0].locations[0].latLng.lat
+          lng = data.results[0].locations[0].latLng.lng
+          $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+          $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+          var redIcon = L.icon({
+            iconUrl: '/assets/media-music-marker.png'
+          });
+
+          map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
+          var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
+
+        });
+
+      })
+
+      
+      // Drag & Drop
+      $(".drag1").draggable({
+        helper: 'clone',
+        containment: 'map',
+        start: function(evt, ui) {
+
+        },
+        stop: function(evt, ui) {
+        $(".show").hide();
+
+          var options = {
+            pid: guid(),
+            type: ui.helper.attr('type'),
+            icon: eval(ui.helper.attr('type') + 'Icon'),
+            draggable: true
+          };
+
+          insertPoint(
+            map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
+            options
+          );
+        }
+      });                        
+    });
+
+    // GET points
+    function loadPoints() {
+
+    var maxFeatures = 50;
+    var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
+    + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
+    + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
+    + user.ip + '</Literal></PropertyIsEqualTo>';
+
+    $.get(gs.ows + params, function(json){
+
+    // Remove all markers
+    for(i=0;i<markers.length;i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+
+    // Add markers
+    for(i=0;i<json.features.length;i++) {
     
-    // Drag & Drop
-    $(".drag").draggable({
-      helper: 'clone',
-      containment: 'map',
-      start: function(evt, ui) {
+      var ftr = json.features[i];
 
-      },
-      stop: function(evt, ui) {
-      $(".show").hide();
+      var options = {
+        pid: ftr.properties.pid,
+        type: ftr.properties['class'],
+        icon: eval(ftr.properties['class'] + 'Icon'),
+        draggable: true
+      };
 
-        var options = {
-          pid: guid(),
-          type: ui.helper.attr('type'),
-          icon: eval(ui.helper.attr('type') + 'Icon'),
-          draggable: true
-        };
+      var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
+      point.bindPopup(
+        '<a onClick="deletePoint(\'' + point.options.pid 
+        + '\');" href="#">Remove Me!</a>',
+        {
+          closeButton: false
+        }
+      );
 
-        insertPoint(
-          map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
-          options
-        );
-      }
-    });                        
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+                    }
+                    });
+                    }
+
+    // INSERT point
+
+    function insertPoint(position,options) {
+      var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+
+    // UPDATE point
+    function updatePoint(point) {
+      console.log("lat: "+ point.getLatLng().lat);
+      console.log("long: "+ point.getLatLng().lng);
+      var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
   });
 
-  // GET points
-  function loadPoints() {
+  $("#video" ).on( "click", function() {
+    $("#label-check" ).html( $( "input:checked" ).val());
+    $(".drag1").hide();
+    $(".drag2").show();
+    $(".drag3").hide();
+    $(".drag4").hide();
+    $(".drag5").hide();
+    $("#video-box").show();
+    $("#photo").hide();
 
-  var maxFeatures = 50;
-  var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
-  + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
-  + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
-  + user.ip + '</Literal></PropertyIsEqualTo>';
-
-  $.get(gs.ows + params, function(json){
-
-  // Remove all markers
-  for(i=0;i<markers.length;i++) {
-    map.removeLayer(markers[i]);
-  }
-  markers = [];
-
-  // Add markers
-  for(i=0;i<json.features.length;i++) {
+    var redIcon   = new poiIcon({iconUrl:'/assets/media-film-marker.png'});;
   
-    var ftr = json.features[i];
+    // Mapquest layer
+    var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+      maxZoom: 18, 
+      attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
+      subdomains: ['1','2','3','4']
+    });
+    // Init application
+    $(document).ready(function() {
+      // Assign points to users
+      $.get('http://api.hostip.info/get_json.php',function(json){
+        user = json;
+        // Load user points
+        loadPoints();
+      });
 
-    var options = {
-      pid: ftr.properties.pid,
-      type: ftr.properties['class'],
-      icon: eval(ftr.properties['class'] + 'Icon'),
-      draggable: true
-    };
+      map = new L.Map('map', {
+        center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
+        zoom: 16,
+        layers: [mapquest],
+        zoomControl: true
+      });
 
-    var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
-    point.bindPopup(
-      '<a onClick="deletePoint(\'' + point.options.pid 
-      + '\');" href="#">Remove Me!</a>',
-      {
-        closeButton: false
-      }
-    );
+      $("#add-address").click(function(){
+         var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
 
-    point.on('dragend', function(evt){
-      updatePoint(point);
+        $.get( url, function( data ) {
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+          lat = data.results[0].locations[0].latLng.lat
+          lng = data.results[0].locations[0].latLng.lng
+          $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+          $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+          var redIcon = L.icon({
+            iconUrl: '/assets/media-film-marker.png'
+          });
+
+          map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
+          var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
+
+        });
+
+      })
+
+      
+      // Drag & Drop
+      $(".drag2").draggable({
+        helper: 'clone',
+        containment: 'map',
+        start: function(evt, ui) {
+
+        },
+        stop: function(evt, ui) {
+        $(".show").hide();
+
+          var options = {
+            pid: guid(),
+            type: ui.helper.attr('type'),
+            icon: eval(ui.helper.attr('type') + 'Icon'),
+            draggable: true
+          };
+
+          insertPoint(
+            map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
+            options
+          );
+        }
+      });                        
     });
 
-    markers.push(point);
-                  }
-                  });
-                  }
+    // GET points
+    function loadPoints() {
 
-  // INSERT point
+    var maxFeatures = 50;
+    var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
+    + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
+    + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
+    + user.ip + '</Literal></PropertyIsEqualTo>';
 
-  function insertPoint(position,options) {
-    var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+    $.get(gs.ows + params, function(json){
 
-    $.get( url, function( data ) {
-      console.log(data);
-      var address = "";
-      if(typeof(data) == "string") {
-        address = JSON.parse(data);
-      }
-      else {
-        address = data;
-      }
-      $("#social_country").val(address.results[0].locations[0].adminArea4)
-      $("#social_city").val(address.results[0].locations[0].adminArea5)
-      $("#social_postal_code").val(address.results[0].locations[0].postalCode)
-      $("#social_lat").val(address.results[0].locations[0].latLng.lat)
-      $("#social_long").val(address.results[0].locations[0].latLng.lng)
+    // Remove all markers
+    for(i=0;i<markers.length;i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+
+    // Add markers
+    for(i=0;i<json.features.length;i++) {
     
+      var ftr = json.features[i];
+
+      var options = {
+        pid: ftr.properties.pid,
+        type: ftr.properties['class'],
+        icon: eval(ftr.properties['class'] + 'Icon'),
+        draggable: true
+      };
+
+      var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
+      point.bindPopup(
+        '<a onClick="deletePoint(\'' + point.options.pid 
+        + '\');" href="#">Remove Me!</a>',
+        {
+          closeButton: false
+        }
+      );
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+                    }
+                    });
+                    }
+
+    // INSERT point
+
+    function insertPoint(position,options) {
+      var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+
+    // UPDATE point
+    function updatePoint(point) {
+      console.log("lat: "+ point.getLatLng().lat);
+      console.log("long: "+ point.getLatLng().lng);
+      var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+  });
+  
+  $("#picture" ).on( "click", function() {
+    $("#label-check" ).html( $( "input:checked" ).val());
+    $(".drag1").hide();
+    $(".drag2").hide();
+    $(".drag3").show();
+    $(".drag4").hide();
+    $(".drag5").hide();
+    $("#video-box").hide();
+    $("#photo").show();
+
+    var redIcon   = new poiIcon({iconUrl:'/assets/media-image-marker.png'});;
+  
+    // Mapquest layer
+    var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+      maxZoom: 18, 
+      attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
+      subdomains: ['1','2','3','4']
     });
-    var point = L.marker(position,options).addTo(map);
+    // Init application
+    $(document).ready(function() {
+      // Assign points to users
+      $.get('http://api.hostip.info/get_json.php',function(json){
+        user = json;
+        // Load user points
+        loadPoints();
+      });
 
-    point.on('dragend', function(evt){
-      updatePoint(point);
+      map = new L.Map('map', {
+        center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
+        zoom: 16,
+        layers: [mapquest],
+        zoomControl: true
+      });
+
+      $("#add-address").click(function(){
+         var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
+
+        $.get( url, function( data ) {
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+          lat = data.results[0].locations[0].latLng.lat
+          lng = data.results[0].locations[0].latLng.lng
+          $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+          $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+          var redIcon = L.icon({
+            iconUrl: '/assets/media-image-marker.png'
+          });
+
+          map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
+          var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
+
+        });
+
+      })
+
+      
+      // Drag & Drop
+      $(".drag3").draggable({
+        helper: 'clone',
+        containment: 'map',
+        start: function(evt, ui) {
+
+        },
+        stop: function(evt, ui) {
+        $(".show").hide();
+
+          var options = {
+            pid: guid(),
+            type: ui.helper.attr('type'),
+            icon: eval(ui.helper.attr('type') + 'Icon'),
+            draggable: true
+          };
+
+          insertPoint(
+            map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
+            options
+          );
+        }
+      });                        
     });
 
-    markers.push(point);
+    // GET points
+    function loadPoints() {
 
-  }
+    var maxFeatures = 50;
+    var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
+    + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
+    + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
+    + user.ip + '</Literal></PropertyIsEqualTo>';
 
-  // UPDATE point
-  function updatePoint(point) {
-    console.log("lat: "+ point.getLatLng().lat);
-    console.log("long: "+ point.getLatLng().lng);
-    var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+    $.get(gs.ows + params, function(json){
 
-    $.get( url, function( data ) {
-      console.log(data);
-      var address = "";
-      if(typeof(data) == "string") {
-        address = JSON.parse(data);
-      }
-      else {
-        address = data;
-      }
-      $("#social_country").val(address.results[0].locations[0].adminArea4)
-      $("#social_city").val(address.results[0].locations[0].adminArea5)
-      $("#social_postal_code").val(address.results[0].locations[0].postalCode)
-      $("#social_lat").val(address.results[0].locations[0].latLng.lat)
-      $("#social_long").val(address.results[0].locations[0].latLng.lng)
+    // Remove all markers
+    for(i=0;i<markers.length;i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+
+    // Add markers
+    for(i=0;i<json.features.length;i++) {
     
+      var ftr = json.features[i];
+
+      var options = {
+        pid: ftr.properties.pid,
+        type: ftr.properties['class'],
+        icon: eval(ftr.properties['class'] + 'Icon'),
+        draggable: true
+      };
+
+      var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
+      point.bindPopup(
+        '<a onClick="deletePoint(\'' + point.options.pid 
+        + '\');" href="#">Remove Me!</a>',
+        {
+          closeButton: false
+        }
+      );
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+                    }
+                    });
+                    }
+
+    // INSERT point
+
+    function insertPoint(position,options) {
+      var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+
+    // UPDATE point
+    function updatePoint(point) {
+      console.log("lat: "+ point.getLatLng().lat);
+      console.log("long: "+ point.getLatLng().lng);
+      var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+  });
+  
+  $("#file" ).on( "click", function() {
+    $("#label-check" ).html( $( "input:checked" ).val());
+    $(".drag1").hide();
+    $(".drag2").hide();
+    $(".drag3").hide();
+    $(".drag4").show();
+    $(".drag5").hide();
+    $("#video-box").hide();
+    $("#photo").show();
+
+    var redIcon   = new poiIcon({iconUrl:'/assets/media-texts-marker.png'});;
+  
+    // Mapquest layer
+    var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+      maxZoom: 18, 
+      attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
+      subdomains: ['1','2','3','4']
     });
-    var point = L.marker(position,options).addTo(map);
+    // Init application
+    $(document).ready(function() {
+      // Assign points to users
+      $.get('http://api.hostip.info/get_json.php',function(json){
+        user = json;
+        // Load user points
+        loadPoints();
+      });
 
-    point.on('dragend', function(evt){
-      updatePoint(point);
+      map = new L.Map('map', {
+        center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
+        zoom: 16,
+        layers: [mapquest],
+        zoomControl: true
+      });
+
+      $("#add-address").click(function(){
+         var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
+
+        $.get( url, function( data ) {
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+          lat = data.results[0].locations[0].latLng.lat
+          lng = data.results[0].locations[0].latLng.lng
+          $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+          $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+          var redIcon = L.icon({
+            iconUrl: '/assets/media-texts-marker.png'
+          });
+
+          map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
+          var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
+
+        });
+
+      })
+
+      
+      // Drag & Drop
+      $(".drag4").draggable({
+        helper: 'clone',
+        containment: 'map',
+        start: function(evt, ui) {
+
+        },
+        stop: function(evt, ui) {
+        $(".show").hide();
+
+          var options = {
+            pid: guid(),
+            type: ui.helper.attr('type'),
+            icon: eval(ui.helper.attr('type') + 'Icon'),
+            draggable: true
+          };
+
+          insertPoint(
+            map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
+            options
+          );
+        }
+      });                        
     });
 
-    markers.push(point);
+    // GET points
+    function loadPoints() {
 
-  }
+    var maxFeatures = 50;
+    var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
+    + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
+    + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
+    + user.ip + '</Literal></PropertyIsEqualTo>';
+
+    $.get(gs.ows + params, function(json){
+
+    // Remove all markers
+    for(i=0;i<markers.length;i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+
+    // Add markers
+    for(i=0;i<json.features.length;i++) {
+    
+      var ftr = json.features[i];
+
+      var options = {
+        pid: ftr.properties.pid,
+        type: ftr.properties['class'],
+        icon: eval(ftr.properties['class'] + 'Icon'),
+        draggable: true
+      };
+
+      var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
+      point.bindPopup(
+        '<a onClick="deletePoint(\'' + point.options.pid 
+        + '\');" href="#">Remove Me!</a>',
+        {
+          closeButton: false
+        }
+      );
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+                    }
+                    });
+                    }
+
+    // INSERT point
+
+    function insertPoint(position,options) {
+      var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+
+    // UPDATE point
+    function updatePoint(point) {
+      console.log("lat: "+ point.getLatLng().lat);
+      console.log("long: "+ point.getLatLng().lng);
+      var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+  });
+  
+  $("#web" ).on( "click", function() {
+    $("#label-check" ).html( $( "input:checked" ).val());
+    $(".drag1").hide();
+    $(".drag2").hide();
+    $(".drag3").hide();
+    $(".drag4").hide();
+    $(".drag5").show();
+    $("#video-box").show();
+    $("#photo").hide();
+
+    var redIcon   = new poiIcon({iconUrl:'/assets/media-webpage-marker.png'});;
+  
+    // Mapquest layer
+    var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+      maxZoom: 18, 
+      attribution: "©<a href='http://openstreetmap.org/' target='_blank'>OpenStreetMap</a> contributors, Tiles Courtesy of <a href='http://open.mapquest.com' target='_blank'>MapQuest</a>", 
+      subdomains: ['1','2','3','4']
+    });
+    // Init application
+    $(document).ready(function() {
+      // Assign points to users
+      $.get('http://api.hostip.info/get_json.php',function(json){
+        user = json;
+        // Load user points
+        loadPoints();
+      });
+
+      map = new L.Map('map', {
+        center: new L.LatLng(#{@location.latitude}, #{@location.longitude}), 
+        zoom: 16,
+        layers: [mapquest],
+        zoomControl: true
+      });
+
+      $("#add-address").click(function(){
+         var url = "http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&outFormat=json&inFormat=json&json={location:{street:" + $("#social_city").val() +"},options:{thumbMaps:false}}"
+
+        $.get( url, function( data ) {
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+          lat = data.results[0].locations[0].latLng.lat
+          lng = data.results[0].locations[0].latLng.lng
+          $("#social_lat").val(data.results[0].locations[0].latLng.lat)
+          $("#social_long").val(data.results[0].locations[0].latLng.lng)
+
+          var redIcon = L.icon({
+            iconUrl: '/assets/media-webpage-marker.png'
+          });
+
+          map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));
+          var marker = L.marker([parseFloat(lat), parseFloat(lng)], {icon: redIcon}).addTo(map);
+
+        });
+
+      })
+
+      
+      // Drag & Drop
+      $(".drag5").draggable({
+        helper: 'clone',
+        containment: 'map',
+        start: function(evt, ui) {
+
+        },
+        stop: function(evt, ui) {
+        $(".show").hide();
+
+          var options = {
+            pid: guid(),
+            type: ui.helper.attr('type'),
+            icon: eval(ui.helper.attr('type') + 'Icon'),
+            draggable: true
+          };
+
+          insertPoint(
+            map.containerPointToLatLng([ui.offset.left, ui.offset.top - 75]),
+            options
+          );
+        }
+      });                        
+    });
+
+    // GET points
+    function loadPoints() {
+
+    var maxFeatures = 50;
+    var params = '?service=WFS&version=1.1.0&request=GetFeature&typeName=grp:points'
+    + '&outputFormat=json&sortBy=created+D&maxFeatures=' + maxFeatures
+    + '&filter=<PropertyIsEqualTo><PropertyName>ip</PropertyName><Literal>' 
+    + user.ip + '</Literal></PropertyIsEqualTo>';
+
+    $.get(gs.ows + params, function(json){
+
+    // Remove all markers
+    for(i=0;i<markers.length;i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+
+    // Add markers
+    for(i=0;i<json.features.length;i++) {
+    
+      var ftr = json.features[i];
+
+      var options = {
+        pid: ftr.properties.pid,
+        type: ftr.properties['class'],
+        icon: eval(ftr.properties['class'] + 'Icon'),
+        draggable: true
+      };
+
+      var point = L.marker([ftr.geometry.coordinates[0],ftr.geometry.coordinates[1]],options).addTo(map);
+      point.bindPopup(
+        '<a onClick="deletePoint(\'' + point.options.pid 
+        + '\');" href="#">Remove Me!</a>',
+        {
+          closeButton: false
+        }
+      );
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+                    }
+                    });
+                    }
+
+    // INSERT point
+
+    function insertPoint(position,options) {
+      var url = "http://open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ position.lat +",lng:"+ position.lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+
+    // UPDATE point
+    function updatePoint(point) {
+      console.log("lat: "+ point.getLatLng().lat);
+      console.log("long: "+ point.getLatLng().lng);
+      var url = "//open.mapquestapi.com/geocoding/v1/reverse?key=Fmjtd%7Cluubnua22l%2Caw%3Do5-907l90&json={location: {latLng: {lat:"+ point.getLatLng().lat +",lng:"+ point.getLatLng().lng +"}}}"
+
+      $.get( url, function( data ) {
+        console.log(data);
+        var address = "";
+        if(typeof(data) == "string") {
+          address = JSON.parse(data);
+        }
+        else {
+          address = data;
+        }
+        $("#social_country").val(address.results[0].locations[0].adminArea4)
+        $("#social_city").val(address.results[0].locations[0].adminArea5)
+        $("#social_postal_code").val(address.results[0].locations[0].postalCode)
+        $("#social_lat").val(address.results[0].locations[0].latLng.lat)
+        $("#social_long").val(address.results[0].locations[0].latLng.lng)
+      
+      });
+      var point = L.marker(position,options).addTo(map);
+
+      point.on('dragend', function(evt){
+        updatePoint(point);
+      });
+
+      markers.push(point);
+
+    }
+  });
+
+  $(function () {
+    $('#fileupload').fileupload({
+        
+    });
+  });
 
   // DELETE point
   function deletePoint(pid) {

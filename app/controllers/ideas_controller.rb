@@ -22,12 +22,10 @@ class IdeasController < ApplicationController
 
   def idea_show
     @ideas = []
-    location = params[:country].split(',')
-    city = location[1].split(" ")
-    @city = city
-    @nearby = location[0].split('km')
-    ideas = Idea.where{(city =~ '%#{city[0]}%')}
-    ideas = Idea.near([ideas.first.lat, ideas.first.long], @nearby[0].to_f, :units => :km)
+    @city = params[:country]
+    @nearby = params[:distance]
+    ideas = Idea.where('city ILIKE ?', "%#{params[:country]}%")
+    ideas = Idea.near([ideas.first.lat, ideas.first.long], @nearby.to_f, :units => :km)
     @ideas = ideas.uniq
     respond_to :js
   end
@@ -112,6 +110,6 @@ class IdeasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def idea_params
-      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id, :tag_list, :event_id)
+      params.require(:idea).permit(:title, :description, :image, :lat, :long, :country, :city, :postal_code, :creator, :region_name, :project_id, :tag_list, :event_id, :street)
     end
 end

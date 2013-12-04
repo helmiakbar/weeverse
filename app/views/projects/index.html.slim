@@ -12,10 +12,14 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         td#location0
           | Showing Resul within 5km of #{@result.city}
         td#location1 style="display: none;"
-          | Showing Result within 5km of #{@result.city}
+          | Showing Result within
         td#location2 style="display: none;"
-          input#project_region_name.span2 name="project[address]" placeholder= "5km, Bandung" 
+          input#project_region_distance.span2 name="project[distance]" style="width: 50px;"
         td#location3 style="display: none;"
+          | km of
+        td#location4 style="display: none;"
+          input#project_region_city.span2 name="project[address]"
+        td#location5 style="display: none;"
           a.button#change_location href="javascript:void(0);" onClick="project_show('country')" Set Location
   .large-5.columns.top-bar-content
     - if user_signed_in?            
@@ -34,7 +38,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 javascript:
   var project_show = function(type) {
-    $.get('/projects/project_show.js?type=' + type + '&country=' + $("#project_region_name").val());
+    $.get('/projects/project_show.js?type=' + type + '&country=' + $("#project_region_city").val() + '&distance=' + $("#project_region_distance").val());
     map.remove(); 
   };
   
@@ -44,6 +48,8 @@ javascript:
     $("#location1").show();
     $("#location2").show();
     $("#location3").show();
+    $("#location4").show();
+    $("#location5").show();
   });
 
   

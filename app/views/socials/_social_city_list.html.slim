@@ -9,7 +9,8 @@
         img src="/assets/worldwide.jpg" style="width: 100%;"
       - else
         - social.photos.each do |photo|
-          = image_tag(photo.image, style: 'width: 100%; height: 158px;')
+          - if photo.default.present?
+            = image_tag(photo.image, style: 'width: 100%; height: 158px;')
     .project-info
       | Project By #{social.creator} in #{social.city}
     .project-desc

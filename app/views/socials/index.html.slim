@@ -7,16 +7,20 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
   .large-7.columns.top-bar-content
     table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
       tr
-        td 
+        td
           a.button#change href="#" Change Location
         td#location0
           | Showing Resul within 5km of #{@result.city}
         td#location1 style="display: none;"
-          | Showing Result within 5km of #{@result.city}
+          | Showing Result within
         td#location2 style="display: none;"
-          input#social_region_name.span2 name="social[address]" placeholder= "5km, Bandung" 
+          input#social_region_distance.span2 name="social[distance]" style="width: 50px;"
         td#location3 style="display: none;"
-          a.button#change_location href="javascript:void(0);" onClick="social_show('country')" Set Location  
+          | km of
+        td#location4 style="display: none;"
+          input#social_region_city.span2 name="social[address]"
+        td#location5 style="display: none;"
+          a.button#change_location href="javascript:void(0);" onClick="social_show('country')" Set Location
   .large-5.columns.top-bar-content
     - if user_signed_in?
       = link_to 'New Media', new_social_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
@@ -32,7 +36,7 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
 
 javascript:
   var social_show = function(type) {
-    $.get('/socials/social_show.js?type=' + type + '&country=' + $("#social_region_name").val());
+    $.get('/socials/social_show.js?type=' + type + '&country=' + $("#social_region_city").val() + '&distance=' + $("#social_region_distance").val());
     map.remove(); 
   };
   
@@ -42,4 +46,6 @@ javascript:
     $("#location1").show();
     $("#location2").show();
     $("#location3").show();
+    $("#location4").show();
+    $("#location5").show();
   });

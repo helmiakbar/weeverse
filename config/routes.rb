@@ -28,6 +28,7 @@ Weeverse::Application.routes.draw do
       get "project_show"
       get "project_region"
       get "project_city"
+      get "all_show"
     end
   end
   

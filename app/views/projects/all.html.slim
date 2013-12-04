@@ -7,49 +7,30 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
   == render 'head_content'
 
 #container-bar.row
-  .large-4.columns.top-bar-content
+  .large-7.columns.top-bar-content
+    - if @project_id.nil?
+      table style="background:none; border:none; margin-bottom:0; margin-top: 4px; margin-left: 0;"
+        tr
+          td 
+            a.button#change href="#" Change Location
+          td#location0
+            | Showing Resul within 5km of #{@result.city}
+          td#location1 style="display: none;"
+            | Showing Result within
+          td#location2 style="display: none;"
+            input#all_region_distance.span2 name="all[distance]" style="width: 50px;"
+          td#location3 style="display: none;"
+            | km of
+          td#location4 style="display: none;"
+            input#all_region_city.span2 name="all[address]"
+          td#location5 style="display: none;"
+            a.button#change_location href="javascript:void(0);" onClick="all_show('country')" Set Location
+    - else
+     = link_to 'Show Map', "javascript:void(0)", id: "btn-show" , class: "button", style: "margin-top: 6px"
+     = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
+  .large-5.columns.top-bar-content
     - if user_signed_in?
-      - if @project_id.nil?
-        ul.button-group style="margin-top: 12px;"
-          li
-            a.small.button href="#" All > 
-          li
-            a.small.button#country country-name="#{@location.country_name}" href="javascript:void(0);" onClick="project_show('country');" #{@location.country_name} >
-          li
-            a.small.button#region_name region-name="#{@location.region_name}" href="javascript:void(0);" onClick="project_region('region');" #{@location.region_name} >
-          li
-            a.small.button#city_name city-name="#{@location.city_name}" href="javascript:void(0);" onClick="project_city('city');" #{@location.city_name}
-          li
-            a.button.dropdown#city data-dropdown="drop2" href="#" style="height: 27px; padding-right: 33px; padding-left: 9px"
-            br
-              ul#drop2.f-dropdown
-                li
-                  input#project_country.span2 name="project[country]" placeholder= "Country"
-                  ul.button-group#group1
-                    li
-                      a.small.button#btn-filter1 href="javascript:void(0);" style="width: 53px;" Filter
-                    li
-                      a.small.button#add-region href="javascript:void(0);" style="width: 90px;" Add Region 
-                li#region-field style="display: none;"
-                  input#project_region_name.span2 name="project[region_name]" placeholder= "Region Name" 
-                  ul.button-group#group2
-                    li
-                      a.small.button#btn-filter2 href="javascript:void(0);" style="width: 53px;" Filter
-                    li
-                      a.small.button#add-city href="javascript:void(0);" style="width: 90px;" Add City
-                li#city-field style="display: none;"
-                  input#project_city.span2 name="project[city]" placeholder= "City"
-                  ul.button-group#group3
-                    li
-                      a.small.button#btn-filter3 href="javascript:void(0);" style="width: 53px;" Filter
-      - else
-       = link_to 'Show Map', "javascript:void(0)", id: "btn-show" , class: "button", style: "margin-top: 6px"
-       = link_to 'Hide Map', "javascript:void(0)", id: "btn-hide" , class: "button", style: "margin-top: 6px; display: none;"
-  .large-8.columns.top-bar-content
-    - if user_signed_in?
-      - if @project_id.nil?
-        = link_to 'New Project', new_project_path, id: "btn-add", class: "button", style: "margin-top: 6px; margin-left: 80%"
-      - else
+      - if @project_id.present?
         = link_to 'Add to The Project', new_project_path(parent_id: @project.id), class: "button", style: "margin-top: 6px; margin-left: 80%"
   #container-content.row
     #container-content-left.large-2.columns
@@ -58,53 +39,36 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
         .large-12.columns.left-menu
           = link_to 'All Content', all_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
-          = link_to (!@project_id.nil? ? project_path(id: @project_id) : projects_path), style: 'margin-left : 8px' do
-            = "Projects"
-            = image_tag "tree.jpg", style: "margin-left: 49%;"
+          = link_to "Projects", !@project_id.nil? ? project_path(id: @project_id) : projects_path, style: 'margin-left : 8px'
         .large-12.columns.left-menu
-          = link_to ideas_path, style: 'margin-left : 8px' do
-            = "Ideas"
-            = image_tag "eye.png", style: "margin-left: 55%;"
+          = link_to "Ideas", ideas_path, style: 'margin-left : 8px' 
         .large-12.columns.left-menu
-          = link_to socials_path, style: 'margin-left: 8px' do
-            = "Media"
-            = image_tag "film.png", style: "margin-left: 55%;"
+          = link_to "Media", socials_path, style: 'margin-left: 8px'
+        .larger-12.columns.left-menu
+          = link_to 'Event', events_path, style: 'margin-left: 8px'
         .large-12.columns.left-menu
           a href="#" | Places
     #container-content-right.large-10.columns
       .row
         #container-projects
-          - @all.flatten.each do |all|
-            .project
-              .title
-                img src="/assets/tree.jpg"
-                - if all.class.name.eql? "Project"
-                  = link_to "#{all.title}", project_path(all.id)
-                - else
-                  = link_to "#{all.title}", idea_path(all.id)
-                / = all.title
-                img src="/assets/star-white.jpg" style="float:right;"
-              .image
-                - if all.image.present?
-                  = image_tag(all.image, style: 'width: 100%; height: 158px;')
-                - else
-                  img src="/assets/worldwide.jpg" style="width: 100%;"
-              .project-info
-                | Project By #{all.creator} in #{all.country}
-              .project-desc
-                span
-                  = all.description
-              .project-bottom
-                .rating
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-red.jpg"
-                  img src="/assets/love-white.jpg"
-                  img src="/assets/love-white.jpg"
-                .detail
-                  img src="/assets/love-white.jpg" 
+          == render "all_list"
 
 javascript:
+  var all_show = function(type) {
+    $.get('/projects/all_show.js?type=' + type + '&country=' + $("#all_region_city").val() + '&distance=' + $("#all_region_distance").val());
+    map.remove(); 
+  };
+  
+  $("#change").bind("click", function(){
+    $("#change").hide();
+    $("#location0").hide();
+    $("#location1").show();
+    $("#location2").show();
+    $("#location3").show();
+    $("#location4").show();
+    $("#location5").show();
+  });
+
   $("#btn-show").bind("click", function(){
     $("#btn-hide").show();
     $("#map2").show();
@@ -142,52 +106,3 @@ javascript:
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
   }).addTo(map);
-
-  var project_show = function(type) {
-    $.get('/projects/project_show.js?type=' + type + '&country=' + $("#country").attr("country-name"));
-    map.remove(); 
-  };
-  
-  var project_region = function(type) {
-    $.get('/projects/project_region.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name"));
-    map.remove(); 
-  };
-  
-  var project_city = function(type) {
-    $.get('/projects/project_city.js?type=' + type + '&country=' + $("#country").attr("country-name") + '&region=' + $('#region_name').attr("region-name") + '&city=' + $('#city_name').attr("city-name") );
-    map.remove(); 
-  };
-  
-  $("#add-region").bind("click", function(){
-    $("#region-field").show();
-    $("#group1").hide();
-  });
-  
-  $("#add-city").bind("click", function(){
-    $("#city-field").show();
-    $("#group2").hide();
-  });
-  
-  $("#btn-filter1").bind("click", function(){
-    $("#country").text($("#project_country").val());
-    $("#country").attr('country-name',$("#project_country").val());
-    $("#region_name").hide();
-    $("#city_name").hide();
-  });
-  
-  $("#btn-filter2").bind("click", function(){
-    $("#country").text($("#project_country").val());
-    $("#country").attr('country-name',$("#project_country").val());
-    $("#region_name").text($("#project_region_name").val());
-    $("#region_name").attr('region-name',$("#project_region_name").val());
-    $("#city_name").hide();
-  });
-  
-  $("#btn-filter3").bind("click", function(){
-    $("#country").text($("#project_country").val());
-    $("#country").attr('country-name',$("#project_country").val());
-    $("#region_name").text($("#project_region_name").val());
-    $("#region_name").attr('region-name',$("#project_region_name").val());
-    $("#city_name").text($("#project_city").val());
-    $("#city_name").attr('city-name',$("#project_city").val());
-  });

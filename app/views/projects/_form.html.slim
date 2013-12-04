@@ -17,10 +17,10 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
     .large-4.columns.top-bar-content
       p
         | Drag this
-        img.drag.show alt="POI: red" src="/assets/tree_green.png" type="red"
+        img.drag.show alt="POI: red" src="/assets/project-marker.png" type="red"
         | to the map, or set location manually
     .large-8.columns.top-bar-content
-      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: 175px;"
+      table style="background:none; border:none; margin-bottom:0; margin-top:-6px; margin-left: -15px;"
         tr
           td 
             = f.label :country
@@ -34,8 +34,12 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
             = f.label :postal_code
           td
             = f.text_field :postal_code
+          td 
+            = f.label :street
           td
-            div id ="add-address" "add address.."
+            = f.text_field :street
+          td
+            div id ="add-address" "set location"
     #container-content.row
       #container-content-left.large-2.columns
         .row
@@ -78,14 +82,13 @@ javascript:
     options: {
       iconSize: [22,32],
       iconAnchor: [-20,0],
-      shadowUrl: '/assets/tree_shadow.png',
       shadowSize: [22,13],
       shadowAnchor: [-31,-19],
       popupAnchor: [32,-2]
     }
   });
 
-  var redIcon   = new poiIcon({iconUrl:'/assets/tree_green.png'});;
+  var redIcon   = new poiIcon({iconUrl:'/assets/project-marker.png'});;
   
   // Mapquest layer
   var mapquest = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
@@ -126,8 +129,7 @@ javascript:
         $("#project_long").val(data.results[0].locations[0].latLng.lng)
 
         var redIcon = L.icon({
-          iconUrl: '/assets/tree_green.png',
-          shadowUrl: '/assets/tree_shadow.png'
+          iconUrl: '/assets/project-marker.png'
         });
 
         map.panTo(new L.LatLng(parseFloat(lat), parseFloat(lng)));

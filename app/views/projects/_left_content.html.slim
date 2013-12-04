@@ -6,15 +6,19 @@
   .large-12.columns.left-menu
     = link_to 'Ideas', new_idea_path(parent_id: params[:parent_id])
   .large-12.columns.left-menu
-    a href="#" Media
+    = link_to 'Media', new_social_path
+  .large-12.columns.left-menu
+    = link_to 'Event', new_event_path
   .large-12.columns.left-menu
     a href="#" Places
 - else
   .large-12.columns.left-menu
-      = link_to 'Projects', new_project_path
+    = link_to 'Projects', new_project_path
   .large-12.columns.left-menu
     = link_to 'Ideas', new_idea_path
   .large-12.columns.left-menu
     = link_to 'Media', new_social_path
+  .large-12.columns.left-menu
+    = link_to 'Event', new_event_path
   .large-12.columns.left-menu
     a href="#" Places

@@ -18,6 +18,7 @@ class SocialsController < ApplicationController
       end
     else
       @socials = Social.all.near([@result.latitude, @result.longitude], 5, :units => :km)
+      @photo = @socials.map{ |s| s.photos.where(default: true) }
     end
   end
 
@@ -28,12 +29,10 @@ class SocialsController < ApplicationController
 
   def social_show
     @socials = []
-    location = params[:country].split(',')
-    city = location[1].split(" ")
-    @city = city
-    @nearby = location[0].split('km')
-    socials = Social.where{(city =~ '%#{city[0]}%')}
-    socials = Social.near([socials.first.lat, socials.first.long], @nearby[0].to_f, :units => :km)
+    @city = params[:country]
+    @nearby = params[:distance]
+    socials = Social.where('city ILIKE ?', "%#{params[:country]}%")
+    socials = Social.near([socials.first.lat, socials.first.long], @nearby.to_f, :units => :km)
     @socials = socials.uniq
     respond_to :js
   end
@@ -65,6 +64,8 @@ class SocialsController < ApplicationController
       end
     else
       @socials = Social.all
+      @photo = @social.photos.where(default: true)
+      @contact_author = User.where(name: @social.creator)
     end
   end
 
@@ -106,6 +107,7 @@ class SocialsController < ApplicationController
     social_params[:country].blank? ? social_params[:country] << location.country_name : social_params[:country]
     social_params[:city].blank? ? social_params[:city] << location.city_name : social_params[:city]
     @social = Social.new(social_params)
+    @social.category = params[:category]
     if params[:selected].present?
       photos = Photo.find(params[:photos_id])
       photos.default = true
@@ -114,13 +116,17 @@ class SocialsController < ApplicationController
 
     respond_to do |format|
       if @social.save
-        params[:url].each do |key, value|
-          @social.media_urls.create(url: value)
+        if params[:url].present?
+          params[:url].each do |key, value|
+            @social.media_urls.create(url: value)
+          end
         end
-        params[:photos].each do |key, value|
-          photo = Photo.find(value)
-          photo.social_id = @social.id
-          photo.save
+        if params[:photos].present?
+          params[:photos].each do |key, value|
+            photo = Photo.find(value)
+            photo.social_id = @social.id
+            photo.save
+          end
         end
         format.html { redirect_to @social, notice: 'Social was successfully created.' }
         format.json { render action: 'show', status: :created, location: @social }
@@ -163,7 +169,7 @@ class SocialsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def social_params
-      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :project_id, :event_id)
+      params.require(:social).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :project_id, :event_id, :street, :category)
     end
 
     def media_url_params

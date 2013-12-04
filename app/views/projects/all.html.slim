@@ -96,7 +96,17 @@ javascript:
     $("#container-project.row").show();
   });
   var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
+  var loca = #{raw [@location.latitude, @location.longitude]}
+  var map = ""
+  
+  if(dataLocation.length == 0)
+  {
+    map = L.map('map').setView(loca, 2);
+  }else{
+    map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
+  }
+
+
   var redIcon = L.icon({
     iconUrl: '/assets/poi_red.png'
   });

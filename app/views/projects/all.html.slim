@@ -96,7 +96,6 @@ javascript:
     $("#container-project.row").show();
   });
   var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  //var loca = #{raw [@location.latitude, @location.longitude]}
   var map = ""
   
   if(dataLocation.length == 0)

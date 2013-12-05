@@ -29,13 +29,14 @@
 javascript:
   var dataLocation2 = #{raw @socials.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.category.to_s] }};
   var map = ""
-  
+
   if(dataLocation2.length == 0)
   {
     map = L.map('map').setView([51.3512542357518,-0.461769104003906], 2);
   }else{
     map = L.map('map').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 2);
   }
+
   for (var i = 0; i < dataLocation2.length; i++) {
     console.log(dataLocation2[i][2]);
     if(dataLocation2[i][2] === "Video"){
@@ -59,6 +60,7 @@ javascript:
         iconUrl: '/assets/media-webpage-marker.png'
       });
     }
+
     var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])], {icon: redIcon}).addTo(map);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {

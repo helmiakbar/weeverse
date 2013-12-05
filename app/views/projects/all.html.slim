@@ -106,6 +106,7 @@ javascript:
     $("#map").show();
     $("#container-project.row").show();
   });
+
   var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.category.to_s] }};
   var map = ""
 

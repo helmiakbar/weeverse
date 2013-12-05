@@ -97,7 +97,10 @@ class ProjectsController < ApplicationController
       @all.flatten
     else
       projects = Project.where(parent_id: nil)
-      ideas = Idea.all  
+      ideas = Idea.all
+      social = Social.all
+      # @all << ideas << projects << socials
+      # @all.flatten
     end
     @countries = projects.map(&:country).uniq
     @regions = projects.map(&:region_name).uniq
@@ -131,8 +134,8 @@ class ProjectsController < ApplicationController
         @projects.flatten
         @projects2 = Project.where(parent_id: nil)
       else
-        # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-        @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+        @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+        # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
         @projects = Project.where(city: @location.city_name, parent_id: params[:id])
       end
     else
@@ -142,8 +145,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @project = Project.new
     @project.parent_id = params[:parent_id] if params[:parent_id]
   end
@@ -209,6 +212,6 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id, :tag_list, :street)
+      params.require(:project).permit(:title, :description, :country, :city, :postal_code, :image, :creator, :lat, :long, :region_name, :parent_id, :tag_list, :street, :category)
     end
   end

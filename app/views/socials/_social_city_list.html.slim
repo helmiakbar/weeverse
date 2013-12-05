@@ -27,12 +27,38 @@
         img src="/assets/love-white.jpg"
 
 javascript:
-  var dataLocation2 = #{raw @socials.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 13);
-  var redIcon = L.icon({
-    iconUrl: '/assets/film.png'
-  });
-  for (i = 0; i < dataLocation2.length; i++) {
+  var dataLocation2 = #{raw @socials.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.category.to_s] }};
+  var map = ""
+  
+  if(dataLocation2.length == 0)
+  {
+    map = L.map('map').setView([51.3512542357518,-0.461769104003906], 2);
+  }else{
+    map = L.map('map').setView([parseFloat(dataLocation2[0][0]), parseFloat(dataLocation2[0][1])], 2);
+  }
+  for (var i = 0; i < dataLocation2.length; i++) {
+    console.log(dataLocation2[i][2]);
+    if(dataLocation2[i][2] === "Video"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/media-film-marker.png'
+      });
+    }else if(dataLocation2[i][2] === "Music"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/media-music-marker.png'
+      });
+    }else if(dataLocation2[i][2] === "Picture"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/media-image-marker.png'
+      });
+    }else if(dataLocation2[i][2] === "File"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/media-texts-marker.png'
+      });
+    }else{
+      var redIcon = L.icon({
+        iconUrl: '/assets/media-webpage-marker.png'
+      });
+    }
     var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])], {icon: redIcon}).addTo(map);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {

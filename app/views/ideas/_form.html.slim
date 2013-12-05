@@ -57,6 +57,7 @@ script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"
             = f.label :tag_list, "Tags ( separated by commas )"
             = f.text_field :tag_list
             = f.hidden_field :creator, value: current_user.name
+            = f.hidden_field :category, value: Idea
             = f.hidden_field :lat
             = f.hidden_field :long
             = f.hidden_field :region_name

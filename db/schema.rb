@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131204001310) do
+ActiveRecord::Schema.define(version: 20131205000025) do
 
   create_table "events", force: true do |t|
     t.string "title"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20131204001310) do
     t.float    "lat"
     t.float    "long"
     t.string   "street"
+    t.string   "category"
   end
 
   create_table "media_urls", force: true do |t|
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 20131204001310) do
     t.float    "lat"
     t.float    "long"
     t.string   "street"
+    t.string   "category"
   end
 
   create_table "projects_users", id: false, force: true do |t|

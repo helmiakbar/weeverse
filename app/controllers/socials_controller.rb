@@ -71,8 +71,8 @@ class SocialsController < ApplicationController
 
   # GET /socials/new
   def new
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @social = Social.new
     @social.project_id = params[:parent_id] if params[:parent_id]
   end

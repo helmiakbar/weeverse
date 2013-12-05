@@ -6,8 +6,8 @@ class EventsController < ApplicationController
   def index
     @result = request.location
     if user_signed_in?
-      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       if params[:tag]
         @events = Event.where('city = ? OR country = ?', @location.city_name, @location.country_name).near([@result.latitude, @result.longitude], 5, :units => :km).tagged_with(params[:tag])
       else
@@ -23,8 +23,8 @@ class EventsController < ApplicationController
   def show
     @event1 = Event.where(id: params[:id])
     if user_signed_in?
-      @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-      # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+      # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+      @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
       @events = Event.where(city: @location.city_name)
     else
       @events = Event.all
@@ -33,8 +33,8 @@ class EventsController < ApplicationController
 
   # GET /events/new
   def new
-    @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # @location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    @location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     @event = Event.new
   end
 
@@ -45,8 +45,8 @@ class EventsController < ApplicationController
   # POST /events
   # POST /events.json
   def create
-    location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
-    # location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
+    # location = GeoIP.new('lib/GeoLiteCity.dat').city(current_user.current_sign_in_ip)
+    location = GeoIP.new('lib/GeoLiteCity.dat').city('110.136.133.185')
     event_params[:lat].blank? ? event_params[:lat] << location.latitude.to_s : event_params[:lat]
     event_params[:long].blank? ? event_params[:long] << location.longitude.to_s : event_params[:long]
     event_params[:country].blank? ? event_params[:country] << location.country_name : event_params[:country]

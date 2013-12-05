@@ -16,11 +16,11 @@ script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"
           td#location0
             | Showing Resul within 5km of #{@result.city}
           td#location1 style="display: none;"
-            | Showing Result within
+            | Distance
           td#location2 style="display: none;"
             input#all_region_distance.span2 name="all[distance]" style="width: 50px;"
           td#location3 style="display: none;"
-            | km of
+            | Location
           td#location4 style="display: none;"
             input#all_region_city.span2 name="all[address]"
           td#location5 style="display: none;"
@@ -75,12 +75,23 @@ javascript:
     $("#btn-show").hide();
     $("#map").hide();
     $("#container-project.row").hide();
-    var dataLocation2 = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
+    var dataLocation2 = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.category.to_s] }};
     var map2 = L.map('map2').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
-    var redIcon = L.icon({
-      iconUrl: '/assets/poi_red.png'
-    });
-    for (i = 0; i < dataLocation2.length; i++) {
+    for (var i = 0; i < dataLocation2.length; i++) {
+      if(dataLocation2[i][2] === "Project"){
+        var redIcon = L.icon({
+          iconUrl: '/assets/project-marker.png'
+        });
+      }else if(dataLocation2[i][2] === "Idea"){
+        var redIcon = L.icon({
+          iconUrl: '/assets/idea-marker.png'
+        });
+      }else{
+        var redIcon = L.icon({
+          iconUrl: '/assets/poi_red.png'
+        });
+      }
+
       var marker = L.marker([parseFloat(dataLocation2[i][0]), parseFloat(dataLocation2[i][1])], {icon: redIcon}).addTo(map2);
     }
     L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
@@ -95,12 +106,30 @@ javascript:
     $("#map").show();
     $("#container-project.row").show();
   });
-  var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long] }};
-  var map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
-  var redIcon = L.icon({
-    iconUrl: '/assets/poi_red.png'
-  });
-  for (i = 0; i < dataLocation.length; i++) {
+  var dataLocation = #{raw @all.flatten.map{|test| [test.lat.nil? ? "" : test.lat, test.long.nil? ? "" : test.long, test.category.to_s] }};
+  var map = ""
+
+  if(dataLocation.length == 0)
+  {
+    map = L.map('map').setView([51.3512542357518,-0.461769104003906], 2);
+  }else{
+    map = L.map('map').setView([parseFloat(dataLocation[0][0]), parseFloat(dataLocation[0][1])], 2);
+  }
+
+  for (var i = 0; i < dataLocation.length; i++) {
+    if(dataLocation[i][2] === "Project"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/project-marker.png'
+      });
+    }else if(dataLocation[i][2] === "Idea"){
+      var redIcon = L.icon({
+        iconUrl: '/assets/idea-marker.png'
+      });
+    }else{
+      var redIcon = L.icon({
+        iconUrl: '/assets/poi_red.png'
+      });
+    }
     var marker = L.marker([parseFloat(dataLocation[i][0]), parseFloat(dataLocation[i][1])], {icon: redIcon}).addTo(map);
   }
   L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
